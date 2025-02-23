@@ -1,0 +1,1 @@
+[    0.000000] Linux version 6.14.0extra-kernel-version-task+ (gabriel-shahrouzi@gabriel-shahrouzi-Virtual-Machine) (gcc (Ubuntu 14.2.0-4ubuntu2) 14.2.0, GNU ld (GNU Binutils for Ubuntu) 2.43.1) #2 SMP PREEMPT_DYNAMIC Sun Feb 23 15:49:27 EST 2025
