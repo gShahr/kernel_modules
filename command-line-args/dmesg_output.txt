@@ -1,0 +1,10 @@
+[36432.274882] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complete error status: 2
+[36596.460515] hello: loading out-of-tree module taints kernel.
+[36596.460519] hello: module verification failed: signature and/or required key missing - tainting kernel
+[36596.461741] 0
+[36697.598615] Bye
+[36699.042095] 0
+[36755.802902] Bye
+[36763.789123] 42
+[36794.718283] Bye
+[36914.350560] 0
