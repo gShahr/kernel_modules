@@ -1,0 +1,18 @@
+Running lspci on my ubuntu virtual machine gives me nothing which makes sense
+because it is a virtual machine. Similarly lsusb gives me nothing after
+I type it in the terminal as there are no built-in hardware peripherals
+on a virtual machine.
+
+I tried to tinker around with the hyper v settings on my windows machine
+which I used to run this virtual machine along with my other virtual machines
+with no luck. I thought that there would be hardware settings that could be
+enabled. In the hyper-v settings, there is a place to add hardware but the
+ones for SCSI controller and Fibre Channel Adapter are grayed out. The only
+thing that is available is adding a network adapter which then takes me
+to a page for using a virtual switch so I don't think this would work.
+
+However, I was able to find my PCI and USB devices on my windows system.
+The list is quite long so I will omit the information.
+I used Get-WmiObject Win32_PnPEntity | Where-Object { $_.DeviceID -like "PCI*" }
+to find the PCI and Get-WmiObject -Query "Select * From Win32_USBHub"
+to find the usb devices.
