@@ -1,0 +1,3 @@
+Linux gabriel-shahrouzi-Virtual-Machine 6.14.0-rc3+ #1 SMP PREEMPT_DYNAMIC Wed Feb 19 23:34:15 EST 2025 x86_64 x86_64 x86_64 GNU/Linux
+Linux version 6.14.0-rc3+ (gabriel-shahrouzi@gabriel-shahrouzi-Virtual-Machine) (gcc (Ubuntu 14.2.0-4ubuntu2) 14.2.0, GNU ld (GNU Binutils for Ubuntu) 2.43.1) #1 SMP PREEMPT_DYNAMIC Wed Feb 19 23:34:15 EST 2025
+aa35fe6 Modify extra version in makefile
