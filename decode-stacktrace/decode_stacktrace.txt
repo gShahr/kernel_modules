@@ -1,0 +1,19 @@
+Call trace:
+efivarfs_pm_notify+0xcc/0x350 480 (P)
+notifier_call_chain+0x1c4/0x550 85 
+notifier_call_chain_robust kernel/notifier.c:120 [inline]
+blocking_notifier_call_chain_robust+0xdc/0x1bc 345 
+pm_notifier_call_chain_robust+0x34/0x64 102 
+snapshot_open+0x11c/0x270 87 
+misc_open+0x2b8/0x328 179 
+chrdev_open+0x3b0/0x4bc 414 
+do_dentry_open+0xb7c/0x1538 956 
+vfs_open+0x48/0x2d8 1086 
+do_open fs/namei.c:3830 [inline]
+path_openat+0x2308/0x2b1c 3989 
+do_filp_open+0x1e8/0x404 4016 
+do_sys_openat2+0x124/0x1b8 1428 
+do_sys_open fs/open.c:1443 [inline]
+__do_sys_openat fs/open.c:1459 [inline]
+__se_sys_openat fs/open.c:1454 [inline]
+__arm64_sys_openat+0x1f0/0x240 1454 
