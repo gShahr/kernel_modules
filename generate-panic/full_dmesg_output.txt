@@ -5,7 +5,7 @@
 [    0.000000]   AMD AuthenticAMD
 [    0.000000]   Hygon HygonGenuine
 [    0.000000]   Centaur CentaurHauls
-[    0.000000]   zhaoxin   Shanghai  
+[    0.000000]   zhaoxin   Shanghai
 [    0.000000] BIOS-provided physical RAM map:
 [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable
 [    0.000000] BIOS-e820: [mem 0x00000000000c0000-0x00000000000fffff] reserved
@@ -19,7 +19,7 @@
 [    0.000000] NX (Execute Disable) protection: active
 [    0.000000] APIC: Static calls initialized
 [    0.000000] efi: EFI v2.7 by Microsoft
-[    0.000000] efi: ACPI=0xf7ffa000 ACPI 2.0=0xf7ffa014 SMBIOS=0xf7f85000 SMBIOS 3.0=0xf7f83000 MEMATTR=0xf7500518 MOKvar=0xf7f81000 INITRD=0xf6b40418 RNG=0xf7fd3018 
+[    0.000000] efi: ACPI=0xf7ffa000 ACPI 2.0=0xf7ffa014 SMBIOS=0xf7f85000 SMBIOS 3.0=0xf7f83000 MEMATTR=0xf7500518 MOKvar=0xf7f81000 INITRD=0xf6b40418 RNG=0xf7fd3018
 [    0.000000] random: crng init done
 [    0.000000] SMBIOS 3.1.0 present.
 [    0.000000] DMI: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v4.1 05/13/2024
@@ -36,7 +36,7 @@
 [    0.000010] e820: remove [mem 0x000a0000-0x000fffff] usable
 [    0.000017] last_pfn = 0x208000 max_arch_pfn = 0x400000000
 [    0.000051] MTRR map: 3 entries (2 fixed + 1 variable; max 18), built from 8 variable MTRRs
-[    0.000054] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.000054] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT
 [    0.000097] last_pfn = 0xf8000 max_arch_pfn = 0x400000000
 [    0.008851] Using GB pages for direct mapping
 [    0.009101] Secure boot disabled
@@ -124,8 +124,8 @@
 [    0.020022] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:10 nr_cpu_ids:10 nr_node_ids:1
 [    0.020661] percpu: Embedded 88 pages/cpu s237568 r8192 d114688 u524288
 [    0.020667] pcpu-alloc: s237568 r8192 d114688 u524288 alloc=1*2097152
-[    0.020670] pcpu-alloc: [0] 00 01 02 03 [0] 04 05 06 07 
-[    0.020675] pcpu-alloc: [0] 08 09 -- -- 
+[    0.020670] pcpu-alloc: [0] 00 01 02 03 [0] 04 05 06 07
+[    0.020675] pcpu-alloc: [0] 08 09 -- --
 [    0.020691] Hyper-V: PV spinlocks enabled
 [    0.020693] PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
 [    0.020696] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-6.14.0-rc3+ root=UUID=a635049a-e7f4-4ae1-a115-c89c17c95de1 ro earlyprintk=vga quiet splash crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M vt.handoff=7
@@ -133,7 +133,7 @@
 [    0.020800] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
 [    0.021431] Dentry cache hash table entries: 1048576 (order: 11, 8388608 bytes, linear)
 [    0.021762] Inode-cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
-[    0.021939] Fallback order for Node 0: 0 
+[    0.021939] Fallback order for Node 0: 0
 [    0.021942] Built 1 zonelists, mobility grouping on.  Total pages: 2096878
 [    0.021943] Policy zone: Normal
 [    0.021951] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
@@ -143,10 +143,10 @@
 [    0.076957] ftrace: allocated 216 pages with 4 groups
 [    0.077754] Dynamic Preempt: voluntary
 [    0.077833] rcu: Preemptible hierarchical RCU implementation.
-[    0.077833] rcu: 	RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=10.
-[    0.077835] 	Trampoline variant of Tasks RCU enabled.
-[    0.077836] 	Rude variant of Tasks RCU enabled.
-[    0.077836] 	Tracing variant of Tasks RCU enabled.
+[    0.077833] rcu:	RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=10.
+[    0.077835]	Trampoline variant of Tasks RCU enabled.
+[    0.077836]	Rude variant of Tasks RCU enabled.
+[    0.077836]	Tracing variant of Tasks RCU enabled.
 [    0.077837] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
 [    0.077838] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=10
 [    0.077848] RCU Tasks: Setting shift to 4 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=10.
@@ -203,7 +203,7 @@
 [    0.089354] Performance Events: unsupported p6 CPU model 154 no PMU driver, software events only.
 [    0.089354] signal: max sigframe size: 1776
 [    0.089354] rcu: Hierarchical SRCU implementation.
-[    0.089354] rcu: 	Max phase no-delay instances is 400.
+[    0.089354] rcu:	Max phase no-delay instances is 400.
 [    0.089354] Timer migration: 2 hierarchy levels; 8 children per group; 2 crossnode level
 [    0.089354] NMI watchdog: Perf NMI watchdog permanently disabled
 [    0.089354] smp: Bringing up secondary CPUs ...
@@ -425,7 +425,7 @@
 [    0.495469] sd 0:0:0:0: [sda] Attached SCSI disk
 [    0.505453] hv_vmbus: registering driver hid_hyperv
 [    0.507793] input: Microsoft Vmbus HID-compliant Mouse as /devices/0006:045E:0621.0001/input/input1
-[    0.508211] hid-hyperv 0006:045E:0621.0001: input: VIRTUAL HID v0.01 Mouse [Microsoft Vmbus HID-compliant Mouse] on 
+[    0.508211] hid-hyperv 0006:045E:0621.0001: input: VIRTUAL HID v0.01 Mouse [Microsoft Vmbus HID-compliant Mouse] on
 [    2.882686] EXT4-fs (sda2): orphan cleanup on readonly fs
 [    2.883094] EXT4-fs (sda2): mounted filesystem a635049a-e7f4-4ae1-a115-c89c17c95de1 ro with ordered data mode. Quota mode: none.
 [    3.152779] systemd[1]: Inserted module 'autofs4'
@@ -505,7 +505,7 @@
 [    3.946536] EXT4-fs (sda2): re-mounted a635049a-e7f4-4ae1-a115-c89c17c95de1 r/w. Quota mode: none.
 [    3.960624] lp: driver loaded but no devices found
 [    3.968061] systemd-journald[372]: Received client request to flush runtime journal.
-[    3.971381] Adding 4194300k swap on /swap.img.  Priority:-2 extents:3 across:4456444k 
+[    3.971381] Adding 4194300k swap on /swap.img.  Priority:-2 extents:3 across:4456444k
 [    3.972875] ppdev: user-space parallel port driver
 [    3.973621] systemd-journald[372]: File /var/log/journal/91269f289b2c44db97f1de830c3ff945/system.journal corrupted or uncleanly shut down, renaming and replacing.
 [    3.978502] pstore: Registered efi_pstore as persistent store backend

@@ -1,0 +1,41 @@
+From 0239094ca4a7adaf1f9e02fcae5c85c1e274e0f9 Mon Sep 17 00:00:00 2001
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Mon, 24 Feb 2025 11:26:14 -0500
+Subject: [PATCH] Add summary for PCI and USB devices
+
+Complete PCI and USB devices task.
+
+Signed-off-by: Gabriel <gshahrouzi@gmail.com>
+---
+ pci-and-usb-devices/summary.txt | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 pci-and-usb-devices/summary.txt
+
+diff --git a/pci-and-usb-devices/summary.txt b/pci-and-usb-devices/summary.txt
+new file mode 100644
+index 0000000..8a69247
+--- /dev/null
++++ b/pci-and-usb-devices/summary.txt
+@@ -0,0 +1,18 @@
++Running lspci on my ubuntu virtual machine gives me nothing which makes sense
++because it is a virtual machine. Similarly lsusb gives me nothing after
++I type it in the terminal as there are no built-in hardware peripherals
++on a virtual machine.
++
++I tried to tinker around with the hyper v settings on my windows machine
++which I used to run this virtual machine along with my other virtual machines
++with no luck. I thought that there would be hardware settings that could be
++enabled. In the hyper-v settings, there is a place to add hardware but the
++ones for SCSI controller and Fibre Channel Adapter are grayed out. The only
++thing that is available is adding a network adapter which then takes me
++to a page for using a virtual switch so I don't think this would work.
++
++However, I was able to find my PCI and USB devices on my windows system.
++The list is quite long so I will omit the information.
++I used Get-WmiObject Win32_PnPEntity | Where-Object { $_.DeviceID -like "PCI*" }
++to find the PCI and Get-WmiObject -Query "Select * From Win32_USBHub"
++to find the usb devices.
+\ No newline at end of file
+-- 
+2.45.2
+

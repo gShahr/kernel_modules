@@ -1,0 +1,67 @@
+From f594d86a68eebc8ff838d47889c18851929ae9f4 Mon Sep 17 00:00:00 2001
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Sun, 23 Feb 2025 13:33:03 -0500
+Subject: [PATCH] Add command line argument to module
+
+Complete the Command line args task.
+
+Signed-off-by: Gabriel <gshahrouzi@gmail.com>
+---
+ command-line-args/dmesg_output.txt | 10 ++++++++++
+ command-line-args/hello.c          | 27 +++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+ create mode 100644 command-line-args/dmesg_output.txt
+ create mode 100644 command-line-args/hello.c
+
+diff --git a/command-line-args/dmesg_output.txt b/command-line-args/dmesg_output.txt
+new file mode 100644
+index 0000000..2483369
+--- /dev/null
++++ b/command-line-args/dmesg_output.txt
+@@ -0,0 +1,10 @@
++[36432.274882] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complete error status: 2
++[36596.460515] hello: loading out-of-tree module taints kernel.
++[36596.460519] hello: module verification failed: signature and/or required key missing - tainting kernel
++[36596.461741] 0
++[36697.598615] Bye
++[36699.042095] 0
++[36755.802902] Bye
++[36763.789123] 42
++[36794.718283] Bye
++[36914.350560] 0
+diff --git a/command-line-args/hello.c b/command-line-args/hello.c
+new file mode 100644
+index 0000000..c24ad36
+--- /dev/null
++++ b/command-line-args/hello.c
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/moduleparam.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Gabriel Shahrouzi");
++MODULE_DESCRIPTION("Says hello on load and bye when removed");
++
++int random_int;
++module_param(random_int, int, 0644);
++MODULE_PARM_DESC(random_int, "Enter random integer");
++
++static int __init hello_init(void)
++{
++	pr_info("%d\n", random_int);
++	return 0;
++}
++
++static void __exit hello_exit(void)
++{
++	pr_info("Bye\n");
++}
++
++module_init(hello_init);
++module_exit(hello_exit);
+-- 
+2.45.2
+

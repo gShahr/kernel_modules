@@ -1,0 +1,74 @@
+From 741758a81affccac922b178d7ebb465ccf388022 Mon Sep 17 00:00:00 2001
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Mon, 24 Feb 2025 16:28:14 -0500
+Subject: [PATCH] Run test and capture output for ptrace.
+
+Complete kselftest task. Skimmed through a couple of tests
+but could not find any messages that could be improved as there
+lacked text that went along with the pass/fail.
+
+Signed-off-by: Gabriel <gshahrouzi@gmail.com>
+---
+ kselftest-task/output.log | 50 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 kselftest-task/output.log
+
+diff --git a/kselftest-task/output.log b/kselftest-task/output.log
+new file mode 100644
+index 0000000..54bf3a1
+--- /dev/null
++++ b/kselftest-task/output.log
+@@ -0,0 +1,50 @@
++make: Entering directory '/opt/linux_work/linux_stable/tools/testing/selftests'
++make[1]: Entering directory '/opt/linux_work/linux_stable/tools/testing/selftests/ptrace'
++make[1]: Nothing to be done for 'all'.
++make[1]: Leaving directory '/opt/linux_work/linux_stable/tools/testing/selftests/ptrace'
++make[1]: Entering directory '/opt/linux_work/linux_stable/tools/testing/selftests/ptrace'
++TAP version 13
++1..4
++# timeout set to 45
++# selftests: ptrace: get_syscall_info
++# TAP version 13
++# 1..1
++# # Starting 1 tests from 1 test cases.
++# #  RUN           global.get_syscall_info ...
++# #            OK  global.get_syscall_info
++# ok 1 global.get_syscall_info
++# # PASSED: 1 / 1 tests passed.
++# # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
++ok 1 selftests: ptrace: get_syscall_info
++# timeout set to 45
++# selftests: ptrace: peeksiginfo
++# PASS
++ok 2 selftests: ptrace: peeksiginfo
++# timeout set to 45
++# selftests: ptrace: vmaccess
++# TAP version 13
++# 1..2
++# # Starting 2 tests from 1 test cases.
++# #  RUN           global.vmaccess ...
++# #            OK  global.vmaccess
++# ok 1 global.vmaccess
++# #  RUN           global.attach ...
++# # attach: Test terminated by timeout
++# #          FAIL  global.attach
++# not ok 2 global.attach
++# # FAILED: 1 / 2 tests passed.
++# # Totals: pass:1 fail:1 xfail:0 xpass:0 skip:0 error:0
++not ok 3 selftests: ptrace: vmaccess # exit=1
++# timeout set to 45
++# selftests: ptrace: get_set_sud
++# TAP version 13
++# 1..1
++# # Starting 1 tests from 1 test cases.
++# #  RUN           global.get_set_sud ...
++# #            OK  global.get_set_sud
++# ok 1 global.get_set_sud
++# # PASSED: 1 / 1 tests passed.
++# # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
++ok 4 selftests: ptrace: get_set_sud
++make[1]: Leaving directory '/opt/linux_work/linux_stable/tools/testing/selftests/ptrace'
++make: Leaving directory '/opt/linux_work/linux_stable/tools/testing/selftests'
+-- 
+2.45.2
+

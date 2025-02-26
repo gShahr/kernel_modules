@@ -1,0 +1,5423 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 577 806
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Sun Feb 23 17:04:05 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6.5 90
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 559 def
+/d_page_h 770 def
+/d_header_x 0 def
+/d_header_y 755 def
+/d_header_w 559 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 559 def
+/d_footer_h 0 def
+/d_output_w 559 def
+/d_output_h 755 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 1 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(From aa35fe6187275072b2fbe2c9a672dfff0de8f9bb Mon Sep 17 00:00:00 2001) s
+5 731 M
+(From: Gabriel <gshahrouzi@gmail.com>) s
+5 720 M
+(Date: Sun, 23 Feb 2025 16:50:18 -0500) s
+5 709 M
+(Subject: [PATCH] Modify extra version in makefile) s
+5 687 M
+(Complete task extra version.) s
+5 665 M
+(Signed-off-by: Gabriel <gshahrouzi@gmail.com>) s
+5 654 M
+(---) s
+5 643 M
+( extra-kernel-version/Makefile         | 2137 +++++++++++++++++++++++++) s
+5 632 M
+( extra-kernel-version/dmesg_output.txt |    1 +) s
+5 621 M
+( 2 files changed, 2138 insertions\(+\)) s
+5 610 M
+( create mode 100644 extra-kernel-version/Makefile) s
+5 599 M
+( create mode 100644 extra-kernel-version/dmesg_output.txt) s
+5 577 M
+(diff --git a/extra-kernel-version/Makefile b/extra-kernel-version/Makefile) s
+5 566 M
+(new file mode 100644) s
+5 555 M
+(index 0000000..a68bfbb) s
+5 544 M
+(--- /dev/null) s
+5 533 M
+(+++ b/extra-kernel-version/Makefile) s
+5 522 M
+(@@ -0,0 +1,2137 @@) s
+5 511 M
+(+# SPDX-License-Identifier: GPL-2.0) s
+5 500 M
+(+VERSION = 6) s
+5 489 M
+(+PATCHLEVEL = 14) s
+5 478 M
+(+SUBLEVEL = 0) s
+5 467 M
+(+EXTRAVERSION = extra-kernel-version-task) s
+5 456 M
+(+NAME = Baby Opossum Posse) s
+5 445 M
+(+) s
+5 434 M
+(+# *DOCUMENTATION*) s
+5 423 M
+(+# To see a list of typical targets execute "make help") s
+5 412 M
+(+# More info can be located in ./README) s
+5 401 M
+(+# Comments in this file are targeted only to the developer, do not) s
+5 390 M
+(+# expect to learn how to build the kernel reading this file.) s
+5 379 M
+(+) s
+5 368 M
+(+ifeq \($\(filter output-sync,$\(.FEATURES\)\),\)) s
+5 357 M
+(+$\(error GNU Make >= 4.0 is required. Your Make version is $\(MAKE_VERSION\)\)) s
+5 346 M
+(+endif) s
+5 335 M
+(+) s
+5 324 M
+(+$\(if $\(filter __%, $\(MAKECMDGOALS\)\), \\) s
+5 313 M
+(+       $\(error targets prefixed with '__' are only for internal use\)\)) s
+5 302 M
+(+) s
+5 291 M
+(+# That's our default target when none is given on the command line) s
+5 280 M
+(+PHONY := __all) s
+5 269 M
+(+__all:) s
+5 258 M
+(+) s
+5 247 M
+(+# We are using a recursive build, so we need to do a little thinking) s
+5 236 M
+(+# to get the ordering right.) s
+5 225 M
+(+#) s
+5 214 M
+(+# Most importantly: sub-Makefiles should only ever modify files in) s
+5 203 M
+(+# their own directory. If in some directory we have a dependency on) s
+5 192 M
+(+# a file in another dir \(which doesn't happen often, but it's often) s
+5 181 M
+(+# unavoidable when linking the built-in.a targets which finally) s
+5 170 M
+(+# turn into vmlinux\), we will call a sub make in that other dir, and) s
+5 159 M
+(+# after that we are sure that everything which is in that other dir) s
+5 148 M
+(+# is now up to date.) s
+5 137 M
+(+#) s
+5 126 M
+(+# The only cases where we need to modify files which have global) s
+5 115 M
+(+# effects are thus separated out and done before the recursive) s
+5 104 M
+(+# descending is started. They are now explicitly listed as the) s
+5 93 M
+(+# prepare rule.) s
+5 82 M
+(+) s
+5 71 M
+(+this-makefile := $\(lastword $\(MAKEFILE_LIST\)\)) s
+5 60 M
+(+abs_srctree := $\(realpath $\(dir $\(this-makefile\)\)\)) s
+5 49 M
+(+abs_output := $\(CURDIR\)) s
+5 38 M
+(+) s
+5 27 M
+(+ifneq \($\(sub_make_done\),1\)) s
+5 16 M
+(+) s
+5 5 M
+(+# Do not use make's built-in rules and variables) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 2 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+# \(this increases performance and avoids hard-to-debug behaviour\)) s
+5 731 M
+(+MAKEFLAGS += -rR) s
+5 720 M
+(+) s
+5 709 M
+(+# Avoid funny character set dependencies) s
+5 698 M
+(+unexport LC_ALL) s
+5 687 M
+(+LC_COLLATE=C) s
+5 676 M
+(+LC_NUMERIC=C) s
+5 665 M
+(+export LC_COLLATE LC_NUMERIC) s
+5 654 M
+(+) s
+5 643 M
+(+# Avoid interference with shell env settings) s
+5 632 M
+(+unexport GREP_OPTIONS) s
+5 621 M
+(+) s
+5 610 M
+(+# Beautify output) s
+5 599 M
+(+# ---------------------------------------------------------------------------) s
+5 588 M
+(+#) s
+5 577 M
+(+# Most of build commands in Kbuild start with "cmd_". You can optionally define) s
+5 566 M
+(+# "quiet_cmd_*". If defined, the short log is printed. Otherwise, no log from) s
+5 555 M
+(+# that command is printed by default.) s
+5 544 M
+(+#) s
+5 533 M
+(+# e.g.\)) s
+5 522 M
+(+#    quiet_cmd_depmod = DEPMOD  $\(MODLIB\)) s
+5 511 M
+(+#          cmd_depmod = $\(srctree\)/scripts/depmod.sh $\(DEPMOD\) $\(KERNELRELEASE\)) s
+5 500 M
+(+#) s
+5 489 M
+(+# A simple variant is to prefix commands with $\(Q\) - that's useful) s
+5 478 M
+(+# for commands that shall be hidden in non-verbose mode.) s
+5 467 M
+(+#) s
+5 456 M
+(+#    $\(Q\)$\(MAKE\) $\(build\)=scripts/basic) s
+5 445 M
+(+#) s
+5 434 M
+(+# If KBUILD_VERBOSE contains 1, the whole command is echoed.) s
+5 423 M
+(+# If KBUILD_VERBOSE contains 2, the reason for rebuilding is printed.) s
+5 412 M
+(+#) s
+5 401 M
+(+# To put more focus on warnings, be less verbose as default) s
+5 390 M
+(+# Use 'make V=1' to see the full commands) s
+5 379 M
+(+) s
+5 368 M
+(+ifeq \("$\(origin V\)", "command line"\)) s
+5 357 M
+(+  KBUILD_VERBOSE = $\(V\)) s
+5 346 M
+(+endif) s
+5 335 M
+(+) s
+5 324 M
+(+quiet = quiet_) s
+5 313 M
+(+Q = @) s
+5 302 M
+(+) s
+5 291 M
+(+ifneq \($\(findstring 1, $\(KBUILD_VERBOSE\)\),\)) s
+5 280 M
+(+  quiet =) s
+5 269 M
+(+  Q =) s
+5 258 M
+(+endif) s
+5 247 M
+(+) s
+5 236 M
+(+# If the user is running make -s \(silent mode\), suppress echoing of) s
+5 225 M
+(+# commands) s
+5 214 M
+(+ifneq \($\(findstring s,$\(firstword -$\(MAKEFLAGS\)\)\),\)) s
+5 203 M
+(+quiet=silent_) s
+5 192 M
+(+override KBUILD_VERBOSE :=) s
+5 181 M
+(+endif) s
+5 170 M
+(+) s
+5 159 M
+(+export quiet Q KBUILD_VERBOSE) s
+5 148 M
+(+) s
+5 137 M
+(+# Call a source code checker \(by default, "sparse"\) as part of the) s
+5 126 M
+(+# C compilation.) s
+5 115 M
+(+#) s
+5 104 M
+(+# Use 'make C=1' to enable checking of only re-compiled files.) s
+5 93 M
+(+# Use 'make C=2' to enable checking of *all* source files, regardless) s
+5 82 M
+(+# of whether they are re-compiled or not.) s
+5 71 M
+(+#) s
+5 60 M
+(+# See the file "Documentation/dev-tools/sparse.rst" for more details,) s
+5 49 M
+(+# including where to get the "sparse" utility.) s
+5 38 M
+(+) s
+5 27 M
+(+ifeq \("$\(origin C\)", "command line"\)) s
+5 16 M
+(+  KBUILD_CHECKSRC = $\(C\)) s
+5 5 M
+(+endif) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 3 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+ifndef KBUILD_CHECKSRC) s
+5 731 M
+(+  KBUILD_CHECKSRC = 0) s
+5 720 M
+(+endif) s
+5 709 M
+(+) s
+5 698 M
+(+export KBUILD_CHECKSRC) s
+5 687 M
+(+) s
+5 676 M
+(+# Enable "clippy" \(a linter\) as part of the Rust compilation.) s
+5 665 M
+(+#) s
+5 654 M
+(+# Use 'make CLIPPY=1' to enable it.) s
+5 643 M
+(+ifeq \("$\(origin CLIPPY\)", "command line"\)) s
+5 632 M
+(+  KBUILD_CLIPPY := $\(CLIPPY\)) s
+5 621 M
+(+endif) s
+5 610 M
+(+) s
+5 599 M
+(+export KBUILD_CLIPPY) s
+5 588 M
+(+) s
+5 577 M
+(+# Use make M=dir or set the environment variable KBUILD_EXTMOD to specify the) s
+5 566 M
+(+# directory of external module to build. Setting M= takes precedence.) s
+5 555 M
+(+ifeq \("$\(origin M\)", "command line"\)) s
+5 544 M
+(+  KBUILD_EXTMOD := $\(M\)) s
+5 533 M
+(+endif) s
+5 522 M
+(+) s
+5 511 M
+(+ifeq \("$\(origin MO\)", "command line"\)) s
+5 500 M
+(+  KBUILD_EXTMOD_OUTPUT := $\(MO\)) s
+5 489 M
+(+endif) s
+5 478 M
+(+) s
+5 467 M
+(+$\(if $\(word 2, $\(KBUILD_EXTMOD\)\), \\) s
+5 456 M
+(+       $\(error building multiple external modules is not supported\)\)) s
+5 445 M
+(+) s
+5 434 M
+(+$\(foreach x, % :, $\(if $\(findstring $x, $\(KBUILD_EXTMOD\)\), \\) s
+5 423 M
+(+       $\(error module directory path cannot contain '$x'\)\)\)) s
+5 412 M
+(+) s
+5 401 M
+(+# Remove trailing slashes) s
+5 390 M
+(+ifneq \($\(filter %/, $\(KBUILD_EXTMOD\)\),\)) s
+5 379 M
+(+KBUILD_EXTMOD := $\(shell dirname $\(KBUILD_EXTMOD\).\)) s
+5 368 M
+(+endif) s
+5 357 M
+(+) s
+5 346 M
+(+export KBUILD_EXTMOD) s
+5 335 M
+(+) s
+5 324 M
+(+# backward compatibility) s
+5 313 M
+(+KBUILD_EXTRA_WARN ?= $\(KBUILD_ENABLE_EXTRA_GCC_CHECKS\)) s
+5 302 M
+(+) s
+5 291 M
+(+ifeq \("$\(origin W\)", "command line"\)) s
+5 280 M
+(+  KBUILD_EXTRA_WARN := $\(W\)) s
+5 269 M
+(+endif) s
+5 258 M
+(+) s
+5 247 M
+(+export KBUILD_EXTRA_WARN) s
+5 236 M
+(+) s
+5 225 M
+(+# Kbuild will save output files in the current working directory.) s
+5 214 M
+(+# This does not need to match to the root of the kernel source tree.) s
+5 203 M
+(+#) s
+5 192 M
+(+# For example, you can do this:) s
+5 181 M
+(+#) s
+5 170 M
+(+#  cd /dir/to/store/output/files; make -f /dir/to/kernel/source/Makefile) s
+5 159 M
+(+#) s
+5 148 M
+(+# If you want to save output files in a different location, there are) s
+5 137 M
+(+# two syntaxes to specify it.) s
+5 126 M
+(+#) s
+5 115 M
+(+# 1\) O=) s
+5 104 M
+(+# Use "make O=dir/to/store/output/files/") s
+5 93 M
+(+#) s
+5 82 M
+(+# 2\) Set KBUILD_OUTPUT) s
+5 71 M
+(+# Set the environment variable KBUILD_OUTPUT to point to the output directory.) s
+5 60 M
+(+# export KBUILD_OUTPUT=dir/to/store/output/files/; make) s
+5 49 M
+(+#) s
+5 38 M
+(+# The O= assignment takes precedence over the KBUILD_OUTPUT environment) s
+5 27 M
+(+# variable.) s
+5 16 M
+(+) s
+5 5 M
+(+ifeq \("$\(origin O\)", "command line"\)) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 4 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+  KBUILD_OUTPUT := $\(O\)) s
+5 731 M
+(+endif) s
+5 720 M
+(+) s
+5 709 M
+(+ifdef KBUILD_EXTMOD) s
+5 698 M
+(+    ifdef KBUILD_OUTPUT) s
+5 687 M
+(+        objtree := $\(realpath $\(KBUILD_OUTPUT\)\)) s
+5 676 M
+(+        $\(if $\(objtree\),,$\(error specified kernel directory "$\(KBUILD_OUTPUT\)" does not ex) s
+5 665 M
+(ist\)\)) s
+5 654 M
+(+    else) s
+5 643 M
+(+        objtree := $\(abs_srctree\)) s
+5 632 M
+(+    endif) s
+5 621 M
+(+    # If Make is invoked from the kernel directory \(either kernel) s
+5 610 M
+(+    # source directory or kernel build directory\), external modules) s
+5 599 M
+(+    # are built in $\(KBUILD_EXTMOD\) for backward compatibility,) s
+5 588 M
+(+    # otherwise, built in the current directory.) s
+5 577 M
+(+    output := $\(or $\(KBUILD_EXTMOD_OUTPUT\),$\(if $\(filter $\(CURDIR\),$\(objtree\) $\(abs_srctre) s
+5 566 M
+(e\)\),$\(KBUILD_EXTMOD\)\)\)) s
+5 555 M
+(+    # KBUILD_EXTMOD might be a relative path. Remember its absolute path before) s
+5 544 M
+(+    # Make changes the working directory.) s
+5 533 M
+(+    srcroot := $\(realpath $\(KBUILD_EXTMOD\)\)) s
+5 522 M
+(+    $\(if $\(srcroot\),,$\(error specified external module directory "$\(KBUILD_EXTMOD\)" does n) s
+5 511 M
+(ot exist\)\)) s
+5 500 M
+(+else) s
+5 489 M
+(+    objtree := .) s
+5 478 M
+(+    output := $\(KBUILD_OUTPUT\)) s
+5 467 M
+(+endif) s
+5 456 M
+(+) s
+5 445 M
+(+export objtree srcroot) s
+5 434 M
+(+) s
+5 423 M
+(+# Do we want to change the working directory?) s
+5 412 M
+(+ifneq \($\(output\),\)) s
+5 401 M
+(+# $\(realpath ...\) gets empty if the path does not exist. Run 'mkdir -p' first.) s
+5 390 M
+(+$\(shell mkdir -p "$\(output\)"\)) s
+5 379 M
+(+# $\(realpath ...\) resolves symlinks) s
+5 368 M
+(+abs_output := $\(realpath $\(output\)\)) s
+5 357 M
+(+$\(if $\(abs_output\),,$\(error failed to create output directory "$\(output\)"\)\)) s
+5 346 M
+(+endif) s
+5 335 M
+(+) s
+5 324 M
+(+ifneq \($\(words $\(subst :, ,$\(abs_srctree\)\)\), 1\)) s
+5 313 M
+(+$\(error source directory cannot contain spaces or colons\)) s
+5 302 M
+(+endif) s
+5 291 M
+(+) s
+5 280 M
+(+export sub_make_done := 1) s
+5 269 M
+(+) s
+5 258 M
+(+endif # sub_make_done) s
+5 247 M
+(+) s
+5 236 M
+(+ifeq \($\(abs_output\),$\(CURDIR\)\)) s
+5 225 M
+(+# Suppress "Entering directory ..." if we are at the final work directory.) s
+5 214 M
+(+no-print-directory := --no-print-directory) s
+5 203 M
+(+else) s
+5 192 M
+(+# Recursion to show "Entering directory ...") s
+5 181 M
+(+need-sub-make := 1) s
+5 170 M
+(+endif) s
+5 159 M
+(+) s
+5 148 M
+(+ifeq \($\(filter --no-print-directory, $\(MAKEFLAGS\)\),\)) s
+5 137 M
+(+# If --no-print-directory is unset, recurse once again to set it.) s
+5 126 M
+(+# You may end up recursing into __sub-make twice. This is needed due to the) s
+5 115 M
+(+# behavior change in GNU Make 4.4.1.) s
+5 104 M
+(+need-sub-make := 1) s
+5 93 M
+(+endif) s
+5 82 M
+(+) s
+5 71 M
+(+ifeq \($\(need-sub-make\),1\)) s
+5 60 M
+(+) s
+5 49 M
+(+PHONY += $\(MAKECMDGOALS\) __sub-make) s
+5 38 M
+(+) s
+5 27 M
+(+$\(filter-out $\(this-makefile\), $\(MAKECMDGOALS\)\) __all: __sub-make) s
+5 16 M
+(+       @:) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 5 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+# Invoke a second make in the output directory, passing relevant variables) s
+5 731 M
+(+__sub-make:) s
+5 720 M
+(+       $\(Q\)$\(MAKE\) $\(no-print-directory\) -C $\(abs_output\) \\) s
+5 709 M
+(+       -f $\(abs_srctree\)/Makefile $\(MAKECMDGOALS\)) s
+5 698 M
+(+) s
+5 687 M
+(+else # need-sub-make) s
+5 676 M
+(+) s
+5 665 M
+(+# We process the rest of the Makefile if this is the final invocation of make) s
+5 654 M
+(+) s
+5 643 M
+(+ifndef KBUILD_EXTMOD) s
+5 632 M
+(+srcroot := $\(abs_srctree\)) s
+5 621 M
+(+endif) s
+5 610 M
+(+) s
+5 599 M
+(+ifeq \($\(srcroot\),$\(CURDIR\)\)) s
+5 588 M
+(+building_out_of_srctree :=) s
+5 577 M
+(+else) s
+5 566 M
+(+export building_out_of_srctree := 1) s
+5 555 M
+(+endif) s
+5 544 M
+(+) s
+5 533 M
+(+ifdef KBUILD_ABS_SRCTREE) s
+5 522 M
+(+    # Do nothing. Use the absolute path.) s
+5 511 M
+(+else ifeq \($\(srcroot\),$\(CURDIR\)\)) s
+5 500 M
+(+    # Building in the source.) s
+5 489 M
+(+    srcroot := .) s
+5 478 M
+(+else ifeq \($\(srcroot\)/,$\(dir $\(CURDIR\)\)\)) s
+5 467 M
+(+    # Building in a subdirectory of the source.) s
+5 456 M
+(+    srcroot := ..) s
+5 445 M
+(+endif) s
+5 434 M
+(+) s
+5 423 M
+(+export srctree := $\(if $\(KBUILD_EXTMOD\),$\(abs_srctree\),$\(srcroot\)\)) s
+5 412 M
+(+) s
+5 401 M
+(+ifdef building_out_of_srctree) s
+5 390 M
+(+export VPATH := $\(srcroot\)) s
+5 379 M
+(+else) s
+5 368 M
+(+VPATH :=) s
+5 357 M
+(+endif) s
+5 346 M
+(+) s
+5 335 M
+(+# To make sure we do not include .config for any of the *config targets) s
+5 324 M
+(+# catch them early, and hand them over to scripts/kconfig/Makefile) s
+5 313 M
+(+# It is allowed to specify more targets when calling make, including) s
+5 302 M
+(+# mixing *config targets and build targets.) s
+5 291 M
+(+# For example 'make oldconfig all'.) s
+5 280 M
+(+# Detect when mixed targets is specified, and make a second invocation) s
+5 269 M
+(+# of make so .config is not included in this case either \(for *config\).) s
+5 258 M
+(+) s
+5 247 M
+(+version_h := include/generated/uapi/linux/version.h) s
+5 236 M
+(+) s
+5 225 M
+(+clean-targets := %clean mrproper cleandocs) s
+5 214 M
+(+no-dot-config-targets := $\(clean-targets\) \\) s
+5 203 M
+(+                        cscope gtags TAGS tags help% %docs check% coccicheck \\) s
+5 192 M
+(+                        $\(version_h\) headers headers_% archheaders archscripts \\) s
+5 181 M
+(+                        %asm-generic kernelversion %src-pkg dt_binding_check \\) s
+5 170 M
+(+                        outputmakefile rustavailable rustfmt rustfmtcheck) s
+5 159 M
+(+no-sync-config-targets := $\(no-dot-config-targets\) %install modules_sign kernelrelease \\) s
+5 148 M
+(+                         image_name) s
+5 137 M
+(+single-targets := %.a %.i %.ko %.lds %.ll %.lst %.mod %.o %.rsi %.s %/) s
+5 126 M
+(+) s
+5 115 M
+(+config-build   :=) s
+5 104 M
+(+mixed-build    :=) s
+5 93 M
+(+need-config    := 1) s
+5 82 M
+(+may-sync-config        := 1) s
+5 71 M
+(+single-build   :=) s
+5 60 M
+(+) s
+5 49 M
+(+ifneq \($\(filter $\(no-dot-config-targets\), $\(MAKECMDGOALS\)\),\)) s
+5 38 M
+(+    ifeq \($\(filter-out $\(no-dot-config-targets\), $\(MAKECMDGOALS\)\),\)) s
+5 27 M
+(+        need-config :=) s
+5 16 M
+(+    endif) s
+5 5 M
+(+endif) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 6 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+) s
+5 731 M
+(+ifneq \($\(filter $\(no-sync-config-targets\), $\(MAKECMDGOALS\)\),\)) s
+5 720 M
+(+    ifeq \($\(filter-out $\(no-sync-config-targets\), $\(MAKECMDGOALS\)\),\)) s
+5 709 M
+(+        may-sync-config :=) s
+5 698 M
+(+    endif) s
+5 687 M
+(+endif) s
+5 676 M
+(+) s
+5 665 M
+(+need-compiler := $\(may-sync-config\)) s
+5 654 M
+(+) s
+5 643 M
+(+ifneq \($\(KBUILD_EXTMOD\),\)) s
+5 632 M
+(+    may-sync-config :=) s
+5 621 M
+(+endif) s
+5 610 M
+(+) s
+5 599 M
+(+ifeq \($\(KBUILD_EXTMOD\),\)) s
+5 588 M
+(+    ifneq \($\(filter %config,$\(MAKECMDGOALS\)\),\)) s
+5 577 M
+(+        config-build := 1) s
+5 566 M
+(+        ifneq \($\(words $\(MAKECMDGOALS\)\),1\)) s
+5 555 M
+(+            mixed-build := 1) s
+5 544 M
+(+        endif) s
+5 533 M
+(+    endif) s
+5 522 M
+(+endif) s
+5 511 M
+(+) s
+5 500 M
+(+# We cannot build single targets and the others at the same time) s
+5 489 M
+(+ifneq \($\(filter $\(single-targets\), $\(MAKECMDGOALS\)\),\)) s
+5 478 M
+(+    single-build := 1) s
+5 467 M
+(+    ifneq \($\(filter-out $\(single-targets\), $\(MAKECMDGOALS\)\),\)) s
+5 456 M
+(+        mixed-build := 1) s
+5 445 M
+(+    endif) s
+5 434 M
+(+endif) s
+5 423 M
+(+) s
+5 412 M
+(+# For "make -j clean all", "make -j mrproper defconfig all", etc.) s
+5 401 M
+(+ifneq \($\(filter $\(clean-targets\),$\(MAKECMDGOALS\)\),\)) s
+5 390 M
+(+    ifneq \($\(filter-out $\(clean-targets\),$\(MAKECMDGOALS\)\),\)) s
+5 379 M
+(+        mixed-build := 1) s
+5 368 M
+(+    endif) s
+5 357 M
+(+endif) s
+5 346 M
+(+) s
+5 335 M
+(+# install and modules_install need also be processed one by one) s
+5 324 M
+(+ifneq \($\(filter install,$\(MAKECMDGOALS\)\),\)) s
+5 313 M
+(+    ifneq \($\(filter modules_install,$\(MAKECMDGOALS\)\),\)) s
+5 302 M
+(+        mixed-build := 1) s
+5 291 M
+(+    endif) s
+5 280 M
+(+endif) s
+5 269 M
+(+) s
+5 258 M
+(+ifdef mixed-build) s
+5 247 M
+(+# ===========================================================================) s
+5 236 M
+(+# We're called with mixed targets \(*config and build targets\).) s
+5 225 M
+(+# Handle them one by one.) s
+5 214 M
+(+) s
+5 203 M
+(+PHONY += $\(MAKECMDGOALS\) __build_one_by_one) s
+5 192 M
+(+) s
+5 181 M
+(+$\(MAKECMDGOALS\): __build_one_by_one) s
+5 170 M
+(+       @:) s
+5 159 M
+(+) s
+5 148 M
+(+__build_one_by_one:) s
+5 137 M
+(+       $\(Q\)set -e; \\) s
+5 126 M
+(+       for i in $\(MAKECMDGOALS\); do \\) s
+5 115 M
+(+               $\(MAKE\) -f $\(srctree\)/Makefile $$i; \\) s
+5 104 M
+(+       done) s
+5 93 M
+(+) s
+5 82 M
+(+else # !mixed-build) s
+5 71 M
+(+) s
+5 60 M
+(+include $\(srctree\)/scripts/Kbuild.include) s
+5 49 M
+(+) s
+5 38 M
+(+# Read KERNELRELEASE from include/config/kernel.release \(if it exists\)) s
+5 27 M
+(+KERNELRELEASE = $\(call read-file, $\(objtree\)/include/config/kernel.release\)) s
+5 16 M
+(+KERNELVERSION = $\(VERSION\)$\(if $\(PATCHLEVEL\),.$\(PATCHLEVEL\)$\(if $\(SUBLEVEL\),.$\(SUBLEVEL\)\)\)) s
+5 5 M
+($\(EXTRAVERSION\)) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 7 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION) s
+5 731 M
+(+) s
+5 720 M
+(+include $\(srctree\)/scripts/subarch.include) s
+5 709 M
+(+) s
+5 698 M
+(+# Cross compiling and selecting different set of gcc/bin-utils) s
+5 687 M
+(+# ---------------------------------------------------------------------------) s
+5 676 M
+(+#) s
+5 665 M
+(+# When performing cross compilation for other architectures ARCH shall be set) s
+5 654 M
+(+# to the target architecture. \(See arch/* for the possibilities\).) s
+5 643 M
+(+# ARCH can be set during invocation of make:) s
+5 632 M
+(+# make ARCH=arm64) s
+5 621 M
+(+# Another way is to have ARCH set in the environment.) s
+5 610 M
+(+# The default ARCH is the host where make is executed.) s
+5 599 M
+(+) s
+5 588 M
+(+# CROSS_COMPILE specify the prefix used for all executables used) s
+5 577 M
+(+# during compilation. Only gcc and related bin-utils executables) s
+5 566 M
+(+# are prefixed with $\(CROSS_COMPILE\).) s
+5 555 M
+(+# CROSS_COMPILE can be set on the command line) s
+5 544 M
+(+# make CROSS_COMPILE=aarch64-linux-gnu-) s
+5 533 M
+(+# Alternatively CROSS_COMPILE can be set in the environment.) s
+5 522 M
+(+# Default value for CROSS_COMPILE is not to prefix executables) s
+5 511 M
+(+# Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile) s
+5 500 M
+(+ARCH           ?= $\(SUBARCH\)) s
+5 489 M
+(+) s
+5 478 M
+(+# Architecture as present in compile.h) s
+5 467 M
+(+UTS_MACHINE    := $\(ARCH\)) s
+5 456 M
+(+SRCARCH        := $\(ARCH\)) s
+5 445 M
+(+) s
+5 434 M
+(+# Additional ARCH settings for x86) s
+5 423 M
+(+ifeq \($\(ARCH\),i386\)) s
+5 412 M
+(+        SRCARCH := x86) s
+5 401 M
+(+endif) s
+5 390 M
+(+ifeq \($\(ARCH\),x86_64\)) s
+5 379 M
+(+        SRCARCH := x86) s
+5 368 M
+(+endif) s
+5 357 M
+(+) s
+5 346 M
+(+# Additional ARCH settings for sparc) s
+5 335 M
+(+ifeq \($\(ARCH\),sparc32\)) s
+5 324 M
+(+       SRCARCH := sparc) s
+5 313 M
+(+endif) s
+5 302 M
+(+ifeq \($\(ARCH\),sparc64\)) s
+5 291 M
+(+       SRCARCH := sparc) s
+5 280 M
+(+endif) s
+5 269 M
+(+) s
+5 258 M
+(+# Additional ARCH settings for parisc) s
+5 247 M
+(+ifeq \($\(ARCH\),parisc64\)) s
+5 236 M
+(+       SRCARCH := parisc) s
+5 225 M
+(+endif) s
+5 214 M
+(+) s
+5 203 M
+(+export cross_compiling :=) s
+5 192 M
+(+ifneq \($\(SRCARCH\),$\(SUBARCH\)\)) s
+5 181 M
+(+cross_compiling := 1) s
+5 170 M
+(+endif) s
+5 159 M
+(+) s
+5 148 M
+(+KCONFIG_CONFIG ?= .config) s
+5 137 M
+(+export KCONFIG_CONFIG) s
+5 126 M
+(+) s
+5 115 M
+(+# SHELL used by kbuild) s
+5 104 M
+(+CONFIG_SHELL := sh) s
+5 93 M
+(+) s
+5 82 M
+(+HOST_LFS_CFLAGS := $\(shell getconf LFS_CFLAGS 2>/dev/null\)) s
+5 71 M
+(+HOST_LFS_LDFLAGS := $\(shell getconf LFS_LDFLAGS 2>/dev/null\)) s
+5 60 M
+(+HOST_LFS_LIBS := $\(shell getconf LFS_LIBS 2>/dev/null\)) s
+5 49 M
+(+) s
+5 38 M
+(+ifneq \($\(LLVM\),\)) s
+5 27 M
+(+ifneq \($\(filter %/,$\(LLVM\)\),\)) s
+5 16 M
+(+LLVM_PREFIX := $\(LLVM\)) s
+5 5 M
+(+else ifneq \($\(filter -%,$\(LLVM\)\),\)) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 8 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+LLVM_SUFFIX := $\(LLVM\)) s
+5 731 M
+(+endif) s
+5 720 M
+(+) s
+5 709 M
+(+HOSTCC = $\(LLVM_PREFIX\)clang$\(LLVM_SUFFIX\)) s
+5 698 M
+(+HOSTCXX        = $\(LLVM_PREFIX\)clang++$\(LLVM_SUFFIX\)) s
+5 687 M
+(+else) s
+5 676 M
+(+HOSTCC = gcc) s
+5 665 M
+(+HOSTCXX        = g++) s
+5 654 M
+(+endif) s
+5 643 M
+(+HOSTRUSTC = rustc) s
+5 632 M
+(+HOSTPKG_CONFIG = pkg-config) s
+5 621 M
+(+) s
+5 610 M
+(+KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \\) s
+5 599 M
+(+                        -O2 -fomit-frame-pointer -std=gnu11) s
+5 588 M
+(+KBUILD_USERCFLAGS  := $\(KBUILD_USERHOSTCFLAGS\) $\(USERCFLAGS\)) s
+5 577 M
+(+KBUILD_USERLDFLAGS := $\(USERLDFLAGS\)) s
+5 566 M
+(+) s
+5 555 M
+(+# These flags apply to all Rust code in the tree, including the kernel and) s
+5 544 M
+(+# host programs.) s
+5 533 M
+(+export rust_common_flags := --edition=2021 \\) s
+5 522 M
+(+                           -Zbinary_dep_depinfo=y \\) s
+5 511 M
+(+                           -Astable_features \\) s
+5 500 M
+(+                           -Dnon_ascii_idents \\) s
+5 489 M
+(+                           -Dunsafe_op_in_unsafe_fn \\) s
+5 478 M
+(+                           -Wmissing_docs \\) s
+5 467 M
+(+                           -Wrust_2018_idioms \\) s
+5 456 M
+(+                           -Wunreachable_pub \\) s
+5 445 M
+(+                           -Wclippy::all \\) s
+5 434 M
+(+                           -Wclippy::ignored_unit_patterns \\) s
+5 423 M
+(+                           -Wclippy::mut_mut \\) s
+5 412 M
+(+                           -Wclippy::needless_bitwise_bool \\) s
+5 401 M
+(+                           -Wclippy::needless_continue \\) s
+5 390 M
+(+                           -Aclippy::needless_lifetimes \\) s
+5 379 M
+(+                           -Wclippy::no_mangle_with_rust_abi \\) s
+5 368 M
+(+                           -Wclippy::undocumented_unsafe_blocks \\) s
+5 357 M
+(+                           -Wclippy::unnecessary_safety_comment \\) s
+5 346 M
+(+                           -Wclippy::unnecessary_safety_doc \\) s
+5 335 M
+(+                           -Wrustdoc::missing_crate_level_docs \\) s
+5 324 M
+(+                           -Wrustdoc::unescaped_backticks) s
+5 313 M
+(+) s
+5 302 M
+(+KBUILD_HOSTCFLAGS   := $\(KBUILD_USERHOSTCFLAGS\) $\(HOST_LFS_CFLAGS\) \\) s
+5 291 M
+(+                      $\(HOSTCFLAGS\) -I $\(srctree\)/scripts/include) s
+5 280 M
+(+KBUILD_HOSTCXXFLAGS := -Wall -O2 $\(HOST_LFS_CFLAGS\) $\(HOSTCXXFLAGS\) \\) s
+5 269 M
+(+                      -I $\(srctree\)/scripts/include) s
+5 258 M
+(+KBUILD_HOSTRUSTFLAGS := $\(rust_common_flags\) -O -Cstrip=debuginfo \\) s
+5 247 M
+(+                       -Zallow-features= $\(HOSTRUSTFLAGS\)) s
+5 236 M
+(+KBUILD_HOSTLDFLAGS  := $\(HOST_LFS_LDFLAGS\) $\(HOSTLDFLAGS\)) s
+5 225 M
+(+KBUILD_HOSTLDLIBS   := $\(HOST_LFS_LIBS\) $\(HOSTLDLIBS\)) s
+5 214 M
+(+KBUILD_PROCMACROLDFLAGS := $\(or $\(PROCMACROLDFLAGS\),$\(KBUILD_HOSTLDFLAGS\)\)) s
+5 203 M
+(+) s
+5 192 M
+(+# Make variables \(CC, etc...\)) s
+5 181 M
+(+CPP            = $\(CC\) -E) s
+5 170 M
+(+ifneq \($\(LLVM\),\)) s
+5 159 M
+(+CC             = $\(LLVM_PREFIX\)clang$\(LLVM_SUFFIX\)) s
+5 148 M
+(+LD             = $\(LLVM_PREFIX\)ld.lld$\(LLVM_SUFFIX\)) s
+5 137 M
+(+AR             = $\(LLVM_PREFIX\)llvm-ar$\(LLVM_SUFFIX\)) s
+5 126 M
+(+NM             = $\(LLVM_PREFIX\)llvm-nm$\(LLVM_SUFFIX\)) s
+5 115 M
+(+OBJCOPY                = $\(LLVM_PREFIX\)llvm-objcopy$\(LLVM_SUFFIX\)) s
+5 104 M
+(+OBJDUMP                = $\(LLVM_PREFIX\)llvm-objdump$\(LLVM_SUFFIX\)) s
+5 93 M
+(+READELF                = $\(LLVM_PREFIX\)llvm-readelf$\(LLVM_SUFFIX\)) s
+5 82 M
+(+STRIP          = $\(LLVM_PREFIX\)llvm-strip$\(LLVM_SUFFIX\)) s
+5 71 M
+(+else) s
+5 60 M
+(+CC             = $\(CROSS_COMPILE\)gcc) s
+5 49 M
+(+LD             = $\(CROSS_COMPILE\)ld) s
+5 38 M
+(+AR             = $\(CROSS_COMPILE\)ar) s
+5 27 M
+(+NM             = $\(CROSS_COMPILE\)nm) s
+5 16 M
+(+OBJCOPY                = $\(CROSS_COMPILE\)objcopy) s
+5 5 M
+(+OBJDUMP                = $\(CROSS_COMPILE\)objdump) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 9 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+READELF                = $\(CROSS_COMPILE\)readelf) s
+5 731 M
+(+STRIP          = $\(CROSS_COMPILE\)strip) s
+5 720 M
+(+endif) s
+5 709 M
+(+RUSTC          = rustc) s
+5 698 M
+(+RUSTDOC                = rustdoc) s
+5 687 M
+(+RUSTFMT                = rustfmt) s
+5 676 M
+(+CLIPPY_DRIVER  = clippy-driver) s
+5 665 M
+(+BINDGEN                = bindgen) s
+5 654 M
+(+PAHOLE         = pahole) s
+5 643 M
+(+RESOLVE_BTFIDS = $\(objtree\)/tools/bpf/resolve_btfids/resolve_btfids) s
+5 632 M
+(+LEX            = flex) s
+5 621 M
+(+YACC           = bison) s
+5 610 M
+(+AWK            = awk) s
+5 599 M
+(+INSTALLKERNEL  := installkernel) s
+5 588 M
+(+PERL           = perl) s
+5 577 M
+(+PYTHON3                = python3) s
+5 566 M
+(+CHECK          = sparse) s
+5 555 M
+(+BASH           = bash) s
+5 544 M
+(+KGZIP          = gzip) s
+5 533 M
+(+KBZIP2         = bzip2) s
+5 522 M
+(+KLZOP          = lzop) s
+5 511 M
+(+LZMA           = lzma) s
+5 500 M
+(+LZ4            = lz4) s
+5 489 M
+(+XZ             = xz) s
+5 478 M
+(+ZSTD           = zstd) s
+5 467 M
+(+) s
+5 456 M
+(+CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \\) s
+5 445 M
+(+                 -Wbitwise -Wno-return-void -Wno-unknown-attribute $\(CF\)) s
+5 434 M
+(+NOSTDINC_FLAGS :=) s
+5 423 M
+(+CFLAGS_MODULE   =) s
+5 412 M
+(+RUSTFLAGS_MODULE =) s
+5 401 M
+(+AFLAGS_MODULE   =) s
+5 390 M
+(+LDFLAGS_MODULE  =) s
+5 379 M
+(+CFLAGS_KERNEL  =) s
+5 368 M
+(+RUSTFLAGS_KERNEL =) s
+5 357 M
+(+AFLAGS_KERNEL  =) s
+5 346 M
+(+LDFLAGS_vmlinux =) s
+5 335 M
+(+) s
+5 324 M
+(+# Use USERINCLUDE when you must reference the UAPI directories only.) s
+5 313 M
+(+USERINCLUDE    := \\) s
+5 302 M
+(+               -I$\(srctree\)/arch/$\(SRCARCH\)/include/uapi \\) s
+5 291 M
+(+               -I$\(objtree\)/arch/$\(SRCARCH\)/include/generated/uapi \\) s
+5 280 M
+(+               -I$\(srctree\)/include/uapi \\) s
+5 269 M
+(+               -I$\(objtree\)/include/generated/uapi \\) s
+5 258 M
+(+                -include $\(srctree\)/include/linux/compiler-version.h \\) s
+5 247 M
+(+                -include $\(srctree\)/include/linux/kconfig.h) s
+5 236 M
+(+) s
+5 225 M
+(+# Use LINUXINCLUDE when you must reference the include/ directory.) s
+5 214 M
+(+# Needed to be compatible with the O= option) s
+5 203 M
+(+LINUXINCLUDE    := \\) s
+5 192 M
+(+               -I$\(srctree\)/arch/$\(SRCARCH\)/include \\) s
+5 181 M
+(+               -I$\(objtree\)/arch/$\(SRCARCH\)/include/generated \\) s
+5 170 M
+(+               -I$\(srctree\)/include \\) s
+5 159 M
+(+               -I$\(objtree\)/include \\) s
+5 148 M
+(+               $\(USERINCLUDE\)) s
+5 137 M
+(+) s
+5 126 M
+(+KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE) s
+5 115 M
+(+) s
+5 104 M
+(+KBUILD_CFLAGS :=) s
+5 93 M
+(+KBUILD_CFLAGS += -std=gnu11) s
+5 82 M
+(+KBUILD_CFLAGS += -fshort-wchar) s
+5 71 M
+(+KBUILD_CFLAGS += -funsigned-char) s
+5 60 M
+(+KBUILD_CFLAGS += -fno-common) s
+5 49 M
+(+KBUILD_CFLAGS += -fno-PIE) s
+5 38 M
+(+KBUILD_CFLAGS += -fno-strict-aliasing) s
+5 27 M
+(+) s
+5 16 M
+(+KBUILD_CPPFLAGS := -D__KERNEL__) s
+5 5 M
+(+KBUILD_RUSTFLAGS := $\(rust_common_flags\) \\) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 10 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+                   -Cpanic=abort -Cembed-bitcode=n -Clto=n \\) s
+5 731 M
+(+                   -Cforce-unwind-tables=n -Ccodegen-units=1 \\) s
+5 720 M
+(+                   -Csymbol-mangling-version=v0 \\) s
+5 709 M
+(+                   -Crelocation-model=static \\) s
+5 698 M
+(+                   -Zfunction-sections=n \\) s
+5 687 M
+(+                   -Wclippy::float_arithmetic) s
+5 676 M
+(+) s
+5 665 M
+(+KBUILD_AFLAGS_KERNEL :=) s
+5 654 M
+(+KBUILD_CFLAGS_KERNEL :=) s
+5 643 M
+(+KBUILD_RUSTFLAGS_KERNEL :=) s
+5 632 M
+(+KBUILD_AFLAGS_MODULE  := -DMODULE) s
+5 621 M
+(+KBUILD_CFLAGS_MODULE  := -DMODULE) s
+5 610 M
+(+KBUILD_RUSTFLAGS_MODULE := --cfg MODULE) s
+5 599 M
+(+KBUILD_LDFLAGS_MODULE :=) s
+5 588 M
+(+KBUILD_LDFLAGS :=) s
+5 577 M
+(+CLANG_FLAGS :=) s
+5 566 M
+(+) s
+5 555 M
+(+ifeq \($\(KBUILD_CLIPPY\),1\)) s
+5 544 M
+(+       RUSTC_OR_CLIPPY_QUIET := CLIPPY) s
+5 533 M
+(+       RUSTC_OR_CLIPPY = $\(CLIPPY_DRIVER\)) s
+5 522 M
+(+else) s
+5 511 M
+(+       RUSTC_OR_CLIPPY_QUIET := RUSTC) s
+5 500 M
+(+       RUSTC_OR_CLIPPY = $\(RUSTC\)) s
+5 489 M
+(+endif) s
+5 478 M
+(+) s
+5 467 M
+(+# Allows the usage of unstable features in stable compilers.) s
+5 456 M
+(+export RUSTC_BOOTSTRAP := 1) s
+5 445 M
+(+) s
+5 434 M
+(+# Allows finding `.clippy.toml` in out-of-srctree builds.) s
+5 423 M
+(+export CLIPPY_CONF_DIR := $\(srctree\)) s
+5 412 M
+(+) s
+5 401 M
+(+export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE LD CC HOSTPKG) s
+5 390 M
+(_CONFIG) s
+5 379 M
+(+export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN) s
+5 368 M
+(+export HOSTRUSTC KBUILD_HOSTRUSTFLAGS) s
+5 357 M
+(+export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLK) s
+5 346 M
+(ERNEL) s
+5 335 M
+(+export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX) s
+5 324 M
+(+export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD) s
+5 313 M
+(+export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LD) s
+5 302 M
+(FLAGS_MODULE) s
+5 291 M
+(+export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS) s
+5 280 M
+(+) s
+5 269 M
+(+export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_LDFLAGS) s
+5 258 M
+(+export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE) s
+5 247 M
+(+export KBUILD_RUSTFLAGS RUSTFLAGS_KERNEL RUSTFLAGS_MODULE) s
+5 236 M
+(+export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE) s
+5 225 M
+(+export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_RUSTFLAGS_MODULE KBUILD_LDFLAGS_MO) s
+5 214 M
+(DULE) s
+5 203 M
+(+export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL KBUILD_RUSTFLAGS_KERNEL) s
+5 192 M
+(+) s
+5 181 M
+(+# Files to ignore in find ... statements) s
+5 170 M
+(+) s
+5 159 M
+(+export RCS_FIND_IGNORE := \\\( -name SCCS -o -name BitKeeper -o -name .svn -o    \\) s
+5 148 M
+(+                         -name CVS -o -name .pc -o -name .hg -o -name .git \\\) \\) s
+5 137 M
+(+                         -prune -o) s
+5 126 M
+(+) s
+5 115 M
+(+# ===========================================================================) s
+5 104 M
+(+# Rules shared between *config targets and build targets) s
+5 93 M
+(+) s
+5 82 M
+(+# Basic helpers built in scripts/basic/) s
+5 71 M
+(+PHONY += scripts_basic) s
+5 60 M
+(+scripts_basic:) s
+5 49 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts/basic) s
+5 38 M
+(+) s
+5 27 M
+(+PHONY += outputmakefile) s
+5 16 M
+(+ifdef building_out_of_srctree) s
+5 5 M
+(+# Before starting out-of-tree build, make sure the source tree is clean.) s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 11 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+# outputmakefile generates a Makefile in the output directory, if using a) s
+5 731 M
+(+# separate output directory. This allows convenient use of make in the) s
+5 720 M
+(+# output directory.) s
+5 709 M
+(+# At the same time when output Makefile generated, generate .gitignore to) s
+5 698 M
+(+# ignore whole output directory) s
+5 687 M
+(+) s
+5 676 M
+(+ifdef KBUILD_EXTMOD) s
+5 665 M
+(+print_env_for_makefile = \\) s
+5 654 M
+(+       echo "export KBUILD_OUTPUT = $\(objtree\)"; \\) s
+5 643 M
+(+       echo "export KBUILD_EXTMOD = $\(realpath $\(srcroot\)\)" ; \\) s
+5 632 M
+(+       echo "export KBUILD_EXTMOD_OUTPUT = $\(CURDIR\)") s
+5 621 M
+(+else) s
+5 610 M
+(+print_env_for_makefile = \\) s
+5 599 M
+(+       echo "export KBUILD_OUTPUT = $\(CURDIR\)") s
+5 588 M
+(+endif) s
+5 577 M
+(+) s
+5 566 M
+(+quiet_cmd_makefile = GEN     Makefile) s
+5 555 M
+(+      cmd_makefile = { \\) s
+5 544 M
+(+       echo "\\# Automatically generated by $\(abs_srctree\)/Makefile: don't edit"; \\) s
+5 533 M
+(+       $\(print_env_for_makefile\); \\) s
+5 522 M
+(+       echo "include $\(abs_srctree\)/Makefile"; \\) s
+5 511 M
+(+       } > Makefile) s
+5 500 M
+(+) s
+5 489 M
+(+outputmakefile:) s
+5 478 M
+(+ifeq \($\(KBUILD_EXTMOD\),\)) s
+5 467 M
+(+       @if [ -f $\(srctree\)/.config -o \\) s
+5 456 M
+(+                -d $\(srctree\)/include/config -o \\) s
+5 445 M
+(+                -d $\(srctree\)/arch/$\(SRCARCH\)/include/generated ]; then \\) s
+5 434 M
+(+               echo >&2 "***"; \\) s
+5 423 M
+(+               echo >&2 "*** The source tree is not clean, please run 'make$\(if $\(findstri) s
+5 412 M
+(ng command line, $\(origin ARCH\)\), ARCH=$\(ARCH\)\) mrproper'"; \\) s
+5 401 M
+(+               echo >&2 "*** in $\(abs_srctree\)";\\) s
+5 390 M
+(+               echo >&2 "***"; \\) s
+5 379 M
+(+               false; \\) s
+5 368 M
+(+       fi) s
+5 357 M
+(+else) s
+5 346 M
+(+       @if [ -f $\(srcroot\)/modules.order ]; then \\) s
+5 335 M
+(+               echo >&2 "***"; \\) s
+5 324 M
+(+               echo >&2 "*** The external module source tree is not clean."; \\) s
+5 313 M
+(+               echo >&2 "*** Please run 'make -C $\(abs_srctree\) M=$\(realpath $\(srcroot\)\) c) s
+5 302 M
+(lean'"; \\) s
+5 291 M
+(+               echo >&2 "***"; \\) s
+5 280 M
+(+               false; \\) s
+5 269 M
+(+       fi) s
+5 258 M
+(+endif) s
+5 247 M
+(+       $\(Q\)ln -fsn $\(srcroot\) source) s
+5 236 M
+(+       $\(call cmd,makefile\)) s
+5 225 M
+(+       $\(Q\)test -e .gitignore || \\) s
+5 214 M
+(+       { echo "# this is build directory, ignore it"; echo "*"; } > .gitignore) s
+5 203 M
+(+endif) s
+5 192 M
+(+) s
+5 181 M
+(+# The expansion should be delayed until arch/$\(SRCARCH\)/Makefile is included.) s
+5 170 M
+(+# Some architectures define CROSS_COMPILE in arch/$\(SRCARCH\)/Makefile.) s
+5 159 M
+(+# CC_VERSION_TEXT and RUSTC_VERSION_TEXT are referenced from Kconfig \(so they) s
+5 148 M
+(+# need export\), and from include/config/auto.conf.cmd to detect the compiler) s
+5 137 M
+(+# upgrade.) s
+5 126 M
+(+CC_VERSION_TEXT = $\(subst $\(pound\),,$\(shell LC_ALL=C $\(CC\) --version 2>/dev/null | head -n) s
+5 115 M
+( 1\)\)) s
+5 104 M
+(+RUSTC_VERSION_TEXT = $\(subst $\(pound\),,$\(shell $\(RUSTC\) --version 2>/dev/null\)\)) s
+5 93 M
+(+) s
+5 82 M
+(+ifneq \($\(findstring clang,$\(CC_VERSION_TEXT\)\),\)) s
+5 71 M
+(+include $\(srctree\)/scripts/Makefile.clang) s
+5 60 M
+(+endif) s
+5 49 M
+(+) s
+5 38 M
+(+# Include this also for config targets because some architectures need) s
+5 27 M
+(+# cc-cross-prefix to determine CROSS_COMPILE.) s
+5 16 M
+(+ifdef need-compiler) s
+5 5 M
+(+include $\(srctree\)/scripts/Makefile.compiler) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 12 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+endif) s
+5 731 M
+(+) s
+5 720 M
+(+ifdef config-build) s
+5 709 M
+(+# ===========================================================================) s
+5 698 M
+(+# *config targets only - make sure prerequisites are updated, and descend) s
+5 687 M
+(+# in scripts/kconfig to make the *config target) s
+5 676 M
+(+) s
+5 665 M
+(+# Read arch-specific Makefile to set KBUILD_DEFCONFIG as needed.) s
+5 654 M
+(+# KBUILD_DEFCONFIG may point out an alternative default configuration) s
+5 643 M
+(+# used for 'make defconfig') s
+5 632 M
+(+include $\(srctree\)/arch/$\(SRCARCH\)/Makefile) s
+5 621 M
+(+export KBUILD_DEFCONFIG KBUILD_KCONFIG CC_VERSION_TEXT RUSTC_VERSION_TEXT) s
+5 610 M
+(+) s
+5 599 M
+(+config: outputmakefile scripts_basic FORCE) s
+5 588 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts/kconfig $@) s
+5 577 M
+(+) s
+5 566 M
+(+%config: outputmakefile scripts_basic FORCE) s
+5 555 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts/kconfig $@) s
+5 544 M
+(+) s
+5 533 M
+(+else #!config-build) s
+5 522 M
+(+# ===========================================================================) s
+5 511 M
+(+# Build targets only - this includes vmlinux, arch-specific targets, clean) s
+5 500 M
+(+# targets and others. In general all targets except *config targets.) s
+5 489 M
+(+) s
+5 478 M
+(+# If building an external module we do not care about the all: rule) s
+5 467 M
+(+# but instead __all depend on modules) s
+5 456 M
+(+PHONY += all) s
+5 445 M
+(+ifeq \($\(KBUILD_EXTMOD\),\)) s
+5 434 M
+(+__all: all) s
+5 423 M
+(+else) s
+5 412 M
+(+__all: modules) s
+5 401 M
+(+endif) s
+5 390 M
+(+) s
+5 379 M
+(+targets :=) s
+5 368 M
+(+) s
+5 357 M
+(+# Decide whether to build built-in, modular, or both.) s
+5 346 M
+(+# Normally, just do built-in.) s
+5 335 M
+(+) s
+5 324 M
+(+KBUILD_MODULES :=) s
+5 313 M
+(+KBUILD_BUILTIN := 1) s
+5 302 M
+(+) s
+5 291 M
+(+# If we have only "make modules", don't compile built-in objects.) s
+5 280 M
+(+ifeq \($\(MAKECMDGOALS\),modules\)) s
+5 269 M
+(+  KBUILD_BUILTIN :=) s
+5 258 M
+(+endif) s
+5 247 M
+(+) s
+5 236 M
+(+# If we have "make <whatever> modules", compile modules) s
+5 225 M
+(+# in addition to whatever we do anyway.) s
+5 214 M
+(+# Just "make" or "make all" shall build modules as well) s
+5 203 M
+(+) s
+5 192 M
+(+ifneq \($\(filter all modules nsdeps compile_commands.json clang-%,$\(MAKECMDGOALS\)\),\)) s
+5 181 M
+(+  KBUILD_MODULES := 1) s
+5 170 M
+(+endif) s
+5 159 M
+(+) s
+5 148 M
+(+ifeq \($\(MAKECMDGOALS\),\)) s
+5 137 M
+(+  KBUILD_MODULES := 1) s
+5 126 M
+(+endif) s
+5 115 M
+(+) s
+5 104 M
+(+export KBUILD_MODULES KBUILD_BUILTIN) s
+5 93 M
+(+) s
+5 82 M
+(+ifdef need-config) s
+5 71 M
+(+include $\(objtree\)/include/config/auto.conf) s
+5 60 M
+(+endif) s
+5 49 M
+(+) s
+5 38 M
+(+ifeq \($\(KBUILD_EXTMOD\),\)) s
+5 27 M
+(+# Objects we will link into vmlinux / subdirs we need to visit) s
+5 16 M
+(+core-y         :=) s
+5 5 M
+(+drivers-y      :=) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 13 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+libs-y         := lib/) s
+5 731 M
+(+endif # KBUILD_EXTMOD) s
+5 720 M
+(+) s
+5 709 M
+(+# The all: target is the default when no target is given on the) s
+5 698 M
+(+# command line.) s
+5 687 M
+(+# This allow a user to issue only 'make' to build a kernel including modules) s
+5 676 M
+(+# Defaults to vmlinux, but the arch makefile usually adds further targets) s
+5 665 M
+(+all: vmlinux) s
+5 654 M
+(+) s
+5 643 M
+(+CFLAGS_GCOV    := -fprofile-arcs -ftest-coverage) s
+5 632 M
+(+ifdef CONFIG_CC_IS_GCC) s
+5 621 M
+(+CFLAGS_GCOV    += -fno-tree-loop-im) s
+5 610 M
+(+endif) s
+5 599 M
+(+export CFLAGS_GCOV) s
+5 588 M
+(+) s
+5 577 M
+(+# The arch Makefiles can override CC_FLAGS_FTRACE. We may also append it later.) s
+5 566 M
+(+ifdef CONFIG_FUNCTION_TRACER) s
+5 555 M
+(+  CC_FLAGS_FTRACE := -pg) s
+5 544 M
+(+endif) s
+5 533 M
+(+) s
+5 522 M
+(+include $\(srctree\)/arch/$\(SRCARCH\)/Makefile) s
+5 511 M
+(+) s
+5 500 M
+(+ifdef need-config) s
+5 489 M
+(+ifdef may-sync-config) s
+5 478 M
+(+# Read in dependencies to all Kconfig* files, make sure to run syncconfig if) s
+5 467 M
+(+# changes are detected. This should be included after arch/$\(SRCARCH\)/Makefile) s
+5 456 M
+(+# because some architectures define CROSS_COMPILE there.) s
+5 445 M
+(+include include/config/auto.conf.cmd) s
+5 434 M
+(+) s
+5 423 M
+(+$\(KCONFIG_CONFIG\):) s
+5 412 M
+(+       @echo >&2 '***') s
+5 401 M
+(+       @echo >&2 '*** Configuration file "$@" not found!') s
+5 390 M
+(+       @echo >&2 '***') s
+5 379 M
+(+       @echo >&2 '*** Please run some configurator \(e.g. "make oldconfig" or') s
+5 368 M
+(+       @echo >&2 '*** "make menuconfig" or "make xconfig"\).') s
+5 357 M
+(+       @echo >&2 '***') s
+5 346 M
+(+       @/bin/false) s
+5 335 M
+(+) s
+5 324 M
+(+# The actual configuration files used during the build are stored in) s
+5 313 M
+(+# include/generated/ and include/config/. Update them if .config is newer than) s
+5 302 M
+(+# include/config/auto.conf \(which mirrors .config\).) s
+5 291 M
+(+#) s
+5 280 M
+(+# This exploits the 'multi-target pattern rule' trick.) s
+5 269 M
+(+# The syncconfig should be executed only once to make all the targets.) s
+5 258 M
+(+# \(Note: use the grouped target '&:' when we bump to GNU Make 4.3\)) s
+5 247 M
+(+#) s
+5 236 M
+(+# Do not use $\(call cmd,...\) here. That would suppress prompts from syncconfig,) s
+5 225 M
+(+# so you cannot notice that Kconfig is waiting for the user input.) s
+5 214 M
+(+%/config/auto.conf %/config/auto.conf.cmd %/generated/autoconf.h %/generated/rustc_cfg: $\() s
+5 203 M
+(KCONFIG_CONFIG\)) s
+5 192 M
+(+       $\(Q\)$\(kecho\) "  SYNC    $@") s
+5 181 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/Makefile syncconfig) s
+5 170 M
+(+else # !may-sync-config) s
+5 159 M
+(+# External modules and some install targets need include/generated/autoconf.h) s
+5 148 M
+(+# and include/config/auto.conf but do not care if they are up-to-date.) s
+5 137 M
+(+# Use auto.conf to show the error message) s
+5 126 M
+(+) s
+5 115 M
+(+checked-configs := $\(addprefix $\(objtree\)/, include/generated/autoconf.h include/generated) s
+5 104 M
+(/rustc_cfg include/config/auto.conf\)) s
+5 93 M
+(+missing-configs := $\(filter-out $\(wildcard $\(checked-configs\)\), $\(checked-configs\)\)) s
+5 82 M
+(+) s
+5 71 M
+(+ifdef missing-configs) s
+5 60 M
+(+PHONY += $\(objtree\)/include/config/auto.conf) s
+5 49 M
+(+) s
+5 38 M
+(+$\(objtree\)/include/config/auto.conf:) s
+5 27 M
+(+       @echo   >&2 '***') s
+5 16 M
+(+       @echo   >&2 '***  ERROR: Kernel configuration is invalid. The following files are m) s
+5 5 M
+(issing:') s
+_R
+S
+%%Page: (14) 14
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 14 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (14) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+       @printf >&2 '***    - %s\\n' $\(missing-configs\)) s
+5 731 M
+(+       @echo   >&2 '***  Run "make oldconfig && make prepare" on kernel source to fix it.') s
+5 720 M
+(+       @echo   >&2 '***') s
+5 709 M
+(+       @/bin/false) s
+5 698 M
+(+endif) s
+5 687 M
+(+) s
+5 676 M
+(+endif # may-sync-config) s
+5 665 M
+(+endif # need-config) s
+5 654 M
+(+) s
+5 643 M
+(+KBUILD_CFLAGS  += -fno-delete-null-pointer-checks) s
+5 632 M
+(+) s
+5 621 M
+(+ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE) s
+5 610 M
+(+KBUILD_CFLAGS += -O2) s
+5 599 M
+(+KBUILD_RUSTFLAGS += -Copt-level=2) s
+5 588 M
+(+else ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE) s
+5 577 M
+(+KBUILD_CFLAGS += -Os) s
+5 566 M
+(+KBUILD_RUSTFLAGS += -Copt-level=s) s
+5 555 M
+(+endif) s
+5 544 M
+(+) s
+5 533 M
+(+# Always set `debug-assertions` and `overflow-checks` because their default) s
+5 522 M
+(+# depends on `opt-level` and `debug-assertions`, respectively.) s
+5 511 M
+(+KBUILD_RUSTFLAGS += -Cdebug-assertions=$\(if $\(CONFIG_RUST_DEBUG_ASSERTIONS\),y,n\)) s
+5 500 M
+(+KBUILD_RUSTFLAGS += -Coverflow-checks=$\(if $\(CONFIG_RUST_OVERFLOW_CHECKS\),y,n\)) s
+5 489 M
+(+) s
+5 478 M
+(+# Tell gcc to never replace conditional load with a non-conditional one) s
+5 467 M
+(+ifdef CONFIG_CC_IS_GCC) s
+5 456 M
+(+# gcc-10 renamed --param=allow-store-data-races=0 to) s
+5 445 M
+(+# -fno-allow-store-data-races.) s
+5 434 M
+(+KBUILD_CFLAGS  += $\(call cc-option,--param=allow-store-data-races=0\)) s
+5 423 M
+(+KBUILD_CFLAGS  += $\(call cc-option,-fno-allow-store-data-races\)) s
+5 412 M
+(+endif) s
+5 401 M
+(+) s
+5 390 M
+(+ifdef CONFIG_READABLE_ASM) s
+5 379 M
+(+# Disable optimizations that make assembler listings hard to read.) s
+5 368 M
+(+# reorder blocks reorders the control in the function) s
+5 357 M
+(+# ipa clone creates specialized cloned functions) s
+5 346 M
+(+# partial inlining inlines only parts of functions) s
+5 335 M
+(+KBUILD_CFLAGS += -fno-reorder-blocks -fno-ipa-cp-clone -fno-partial-inlining) s
+5 324 M
+(+endif) s
+5 313 M
+(+) s
+5 302 M
+(+stackp-flags-y                                    := -fno-stack-protector) s
+5 291 M
+(+stackp-flags-$\(CONFIG_STACKPROTECTOR\)             := -fstack-protector) s
+5 280 M
+(+stackp-flags-$\(CONFIG_STACKPROTECTOR_STRONG\)      := -fstack-protector-strong) s
+5 269 M
+(+) s
+5 258 M
+(+KBUILD_CFLAGS += $\(stackp-flags-y\)) s
+5 247 M
+(+) s
+5 236 M
+(+KBUILD_RUSTFLAGS-$\(CONFIG_WERROR\) += -Dwarnings) s
+5 225 M
+(+KBUILD_RUSTFLAGS += $\(KBUILD_RUSTFLAGS-y\)) s
+5 214 M
+(+) s
+5 203 M
+(+ifdef CONFIG_FRAME_POINTER) s
+5 192 M
+(+KBUILD_CFLAGS  += -fno-omit-frame-pointer -fno-optimize-sibling-calls) s
+5 181 M
+(+KBUILD_RUSTFLAGS += -Cforce-frame-pointers=y) s
+5 170 M
+(+else) s
+5 159 M
+(+# Some targets \(ARM with Thumb2, for example\), can't be built with frame) s
+5 148 M
+(+# pointers.  For those, we don't have FUNCTION_TRACER automatically) s
+5 137 M
+(+# select FRAME_POINTER.  However, FUNCTION_TRACER adds -pg, and this is) s
+5 126 M
+(+# incompatible with -fomit-frame-pointer with current GCC, so we don't use) s
+5 115 M
+(+# -fomit-frame-pointer with FUNCTION_TRACER.) s
+5 104 M
+(+# In the Rust target specification, "frame-pointer" is set explicitly) s
+5 93 M
+(+# to "may-omit".) s
+5 82 M
+(+ifndef CONFIG_FUNCTION_TRACER) s
+5 71 M
+(+KBUILD_CFLAGS  += -fomit-frame-pointer) s
+5 60 M
+(+endif) s
+5 49 M
+(+endif) s
+5 38 M
+(+) s
+5 27 M
+(+# Initialize all stack variables with a 0xAA pattern.) s
+5 16 M
+(+ifdef CONFIG_INIT_STACK_ALL_PATTERN) s
+5 5 M
+(+KBUILD_CFLAGS  += -ftrivial-auto-var-init=pattern) s
+_R
+S
+%%Page: (15) 15
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 15 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (15) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+endif) s
+5 731 M
+(+) s
+5 720 M
+(+# Initialize all stack variables with a zero value.) s
+5 709 M
+(+ifdef CONFIG_INIT_STACK_ALL_ZERO) s
+5 698 M
+(+KBUILD_CFLAGS  += -ftrivial-auto-var-init=zero) s
+5 687 M
+(+ifdef CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO_ENABLER) s
+5 676 M
+(+# https://github.com/llvm/llvm-project/issues/44842) s
+5 665 M
+(+CC_AUTO_VAR_INIT_ZERO_ENABLER := -enable-trivial-auto-var-init-zero-knowing-it-will-be-rem) s
+5 654 M
+(oved-from-clang) s
+5 643 M
+(+export CC_AUTO_VAR_INIT_ZERO_ENABLER) s
+5 632 M
+(+KBUILD_CFLAGS  += $\(CC_AUTO_VAR_INIT_ZERO_ENABLER\)) s
+5 621 M
+(+endif) s
+5 610 M
+(+endif) s
+5 599 M
+(+) s
+5 588 M
+(+# While VLAs have been removed, GCC produces unreachable stack probes) s
+5 577 M
+(+# for the randomize_kstack_offset feature. Disable it for all compilers.) s
+5 566 M
+(+KBUILD_CFLAGS  += $\(call cc-option, -fno-stack-clash-protection\)) s
+5 555 M
+(+) s
+5 544 M
+(+# Clear used registers at func exit \(to reduce data lifetime and ROP gadgets\).) s
+5 533 M
+(+ifdef CONFIG_ZERO_CALL_USED_REGS) s
+5 522 M
+(+KBUILD_CFLAGS  += -fzero-call-used-regs=used-gpr) s
+5 511 M
+(+endif) s
+5 500 M
+(+) s
+5 489 M
+(+ifdef CONFIG_FUNCTION_TRACER) s
+5 478 M
+(+ifdef CONFIG_FTRACE_MCOUNT_USE_CC) s
+5 467 M
+(+  CC_FLAGS_FTRACE      += -mrecord-mcount) s
+5 456 M
+(+  ifdef CONFIG_HAVE_NOP_MCOUNT) s
+5 445 M
+(+    ifeq \($\(call cc-option-yn, -mnop-mcount\),y\)) s
+5 434 M
+(+      CC_FLAGS_FTRACE  += -mnop-mcount) s
+5 423 M
+(+      CC_FLAGS_USING   += -DCC_USING_NOP_MCOUNT) s
+5 412 M
+(+    endif) s
+5 401 M
+(+  endif) s
+5 390 M
+(+endif) s
+5 379 M
+(+ifdef CONFIG_FTRACE_MCOUNT_USE_OBJTOOL) s
+5 368 M
+(+  ifdef CONFIG_HAVE_OBJTOOL_NOP_MCOUNT) s
+5 357 M
+(+    CC_FLAGS_USING     += -DCC_USING_NOP_MCOUNT) s
+5 346 M
+(+  endif) s
+5 335 M
+(+endif) s
+5 324 M
+(+ifdef CONFIG_FTRACE_MCOUNT_USE_RECORDMCOUNT) s
+5 313 M
+(+  ifdef CONFIG_HAVE_C_RECORDMCOUNT) s
+5 302 M
+(+    BUILD_C_RECORDMCOUNT := y) s
+5 291 M
+(+    export BUILD_C_RECORDMCOUNT) s
+5 280 M
+(+  endif) s
+5 269 M
+(+endif) s
+5 258 M
+(+ifdef CONFIG_HAVE_FENTRY) s
+5 247 M
+(+  # s390-linux-gnu-gcc did not support -mfentry until gcc-9.) s
+5 236 M
+(+  ifeq \($\(call cc-option-yn, -mfentry\),y\)) s
+5 225 M
+(+    CC_FLAGS_FTRACE    += -mfentry) s
+5 214 M
+(+    CC_FLAGS_USING     += -DCC_USING_FENTRY) s
+5 203 M
+(+  endif) s
+5 192 M
+(+endif) s
+5 181 M
+(+export CC_FLAGS_FTRACE) s
+5 170 M
+(+KBUILD_CFLAGS  += $\(CC_FLAGS_FTRACE\) $\(CC_FLAGS_USING\)) s
+5 159 M
+(+KBUILD_AFLAGS  += $\(CC_FLAGS_USING\)) s
+5 148 M
+(+endif) s
+5 137 M
+(+) s
+5 126 M
+(+# We trigger additional mismatches with less inlining) s
+5 115 M
+(+ifdef CONFIG_DEBUG_SECTION_MISMATCH) s
+5 104 M
+(+KBUILD_CFLAGS += -fno-inline-functions-called-once) s
+5 93 M
+(+endif) s
+5 82 M
+(+) s
+5 71 M
+(+# `rustc`'s `-Zfunction-sections` applies to data too \(as of 1.59.0\).) s
+5 60 M
+(+ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) s
+5 49 M
+(+KBUILD_CFLAGS_KERNEL += -ffunction-sections -fdata-sections) s
+5 38 M
+(+KBUILD_RUSTFLAGS_KERNEL += -Zfunction-sections=y) s
+5 27 M
+(+LDFLAGS_vmlinux += --gc-sections) s
+5 16 M
+(+endif) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (16) 16
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 16 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (16) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+ifdef CONFIG_SHADOW_CALL_STACK) s
+5 731 M
+(+ifndef CONFIG_DYNAMIC_SCS) s
+5 720 M
+(+CC_FLAGS_SCS   := -fsanitize=shadow-call-stack) s
+5 709 M
+(+KBUILD_CFLAGS  += $\(CC_FLAGS_SCS\)) s
+5 698 M
+(+KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack) s
+5 687 M
+(+endif) s
+5 676 M
+(+export CC_FLAGS_SCS) s
+5 665 M
+(+endif) s
+5 654 M
+(+) s
+5 643 M
+(+ifdef CONFIG_LTO_CLANG) s
+5 632 M
+(+ifdef CONFIG_LTO_CLANG_THIN) s
+5 621 M
+(+CC_FLAGS_LTO   := -flto=thin -fsplit-lto-unit) s
+5 610 M
+(+else) s
+5 599 M
+(+CC_FLAGS_LTO   := -flto) s
+5 588 M
+(+endif) s
+5 577 M
+(+CC_FLAGS_LTO   += -fvisibility=hidden) s
+5 566 M
+(+) s
+5 555 M
+(+# Limit inlining across translation units to reduce binary size) s
+5 544 M
+(+KBUILD_LDFLAGS += -mllvm -import-instr-limit=5) s
+5 533 M
+(+endif) s
+5 522 M
+(+) s
+5 511 M
+(+ifdef CONFIG_LTO) s
+5 500 M
+(+KBUILD_CFLAGS  += -fno-lto $\(CC_FLAGS_LTO\)) s
+5 489 M
+(+KBUILD_AFLAGS  += -fno-lto) s
+5 478 M
+(+export CC_FLAGS_LTO) s
+5 467 M
+(+endif) s
+5 456 M
+(+) s
+5 445 M
+(+ifdef CONFIG_CFI_CLANG) s
+5 434 M
+(+CC_FLAGS_CFI   := -fsanitize=kcfi) s
+5 423 M
+(+ifdef CONFIG_CFI_ICALL_NORMALIZE_INTEGERS) s
+5 412 M
+(+       CC_FLAGS_CFI    += -fsanitize-cfi-icall-experimental-normalize-integers) s
+5 401 M
+(+endif) s
+5 390 M
+(+ifdef CONFIG_RUST) s
+5 379 M
+(+       # Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST selects) s
+5 368 M
+(+       # CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.) s
+5 357 M
+(+       RUSTC_FLAGS_CFI   := -Zsanitizer=kcfi -Zsanitizer-cfi-normalize-integers) s
+5 346 M
+(+       KBUILD_RUSTFLAGS += $\(RUSTC_FLAGS_CFI\)) s
+5 335 M
+(+       export RUSTC_FLAGS_CFI) s
+5 324 M
+(+endif) s
+5 313 M
+(+KBUILD_CFLAGS  += $\(CC_FLAGS_CFI\)) s
+5 302 M
+(+export CC_FLAGS_CFI) s
+5 291 M
+(+endif) s
+5 280 M
+(+) s
+5 269 M
+(+# Architectures can define flags to add/remove for floating-point support) s
+5 258 M
+(+CC_FLAGS_FPU   += -D_LINUX_FPU_COMPILATION_UNIT) s
+5 247 M
+(+export CC_FLAGS_FPU) s
+5 236 M
+(+export CC_FLAGS_NO_FPU) s
+5 225 M
+(+) s
+5 214 M
+(+ifneq \($\(CONFIG_FUNCTION_ALIGNMENT\),0\)) s
+5 203 M
+(+# Set the minimal function alignment. Use the newer GCC option) s
+5 192 M
+(+# -fmin-function-alignment if it is available, or fall back to -falign-funtions.) s
+5 181 M
+(+# See also CONFIG_CC_HAS_SANE_FUNCTION_ALIGNMENT.) s
+5 170 M
+(+ifdef CONFIG_CC_HAS_MIN_FUNCTION_ALIGNMENT) s
+5 159 M
+(+KBUILD_CFLAGS += -fmin-function-alignment=$\(CONFIG_FUNCTION_ALIGNMENT\)) s
+5 148 M
+(+else) s
+5 137 M
+(+KBUILD_CFLAGS += -falign-functions=$\(CONFIG_FUNCTION_ALIGNMENT\)) s
+5 126 M
+(+endif) s
+5 115 M
+(+endif) s
+5 104 M
+(+) s
+5 93 M
+(+# arch Makefile may override CC so keep this after arch Makefile is included) s
+5 82 M
+(+NOSTDINC_FLAGS += -nostdinc) s
+5 71 M
+(+) s
+5 60 M
+(+# To gain proper coverage for CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE,) s
+5 49 M
+(+# the kernel uses only C99 flexible arrays for dynamically sized trailing) s
+5 38 M
+(+# arrays. Enforce this for everything that may examine structure sizes and) s
+5 27 M
+(+# perform bounds checking.) s
+5 16 M
+(+KBUILD_CFLAGS += $\(call cc-option, -fstrict-flex-arrays=3\)) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (17) 17
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 17 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (17) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+#Currently, disable -Wstringop-overflow for GCC 11, globally.) s
+5 731 M
+(+KBUILD_CFLAGS-$\(CONFIG_CC_NO_STRINGOP_OVERFLOW\) += $\(call cc-option, -Wno-stringop-overflo) s
+5 720 M
+(w\)) s
+5 709 M
+(+KBUILD_CFLAGS-$\(CONFIG_CC_STRINGOP_OVERFLOW\) += $\(call cc-option, -Wstringop-overflow\)) s
+5 698 M
+(+) s
+5 687 M
+(+# disable invalid "can't wrap" optimizations for signed / pointers) s
+5 676 M
+(+KBUILD_CFLAGS  += -fno-strict-overflow) s
+5 665 M
+(+) s
+5 654 M
+(+# Make sure -fstack-check isn't enabled \(like gentoo apparently did\)) s
+5 643 M
+(+KBUILD_CFLAGS  += -fno-stack-check) s
+5 632 M
+(+) s
+5 621 M
+(+# conserve stack if available) s
+5 610 M
+(+ifdef CONFIG_CC_IS_GCC) s
+5 599 M
+(+KBUILD_CFLAGS   += -fconserve-stack) s
+5 588 M
+(+endif) s
+5 577 M
+(+) s
+5 566 M
+(+# change __FILE__ to the relative path to the source directory) s
+5 555 M
+(+ifdef building_out_of_srctree) s
+5 544 M
+(+KBUILD_CPPFLAGS += $\(call cc-option,-fmacro-prefix-map=$\(srcroot\)/=\)) s
+5 533 M
+(+endif) s
+5 522 M
+(+) s
+5 511 M
+(+# include additional Makefiles when needed) s
+5 500 M
+(+include-y                      := scripts/Makefile.extrawarn) s
+5 489 M
+(+include-$\(CONFIG_DEBUG_INFO\)   += scripts/Makefile.debug) s
+5 478 M
+(+include-$\(CONFIG_DEBUG_INFO_BTF\)+= scripts/Makefile.btf) s
+5 467 M
+(+include-$\(CONFIG_KASAN\)                += scripts/Makefile.kasan) s
+5 456 M
+(+include-$\(CONFIG_KCSAN\)                += scripts/Makefile.kcsan) s
+5 445 M
+(+include-$\(CONFIG_KMSAN\)                += scripts/Makefile.kmsan) s
+5 434 M
+(+include-$\(CONFIG_UBSAN\)                += scripts/Makefile.ubsan) s
+5 423 M
+(+include-$\(CONFIG_KCOV\)         += scripts/Makefile.kcov) s
+5 412 M
+(+include-$\(CONFIG_RANDSTRUCT\)   += scripts/Makefile.randstruct) s
+5 401 M
+(+include-$\(CONFIG_AUTOFDO_CLANG\)        += scripts/Makefile.autofdo) s
+5 390 M
+(+include-$\(CONFIG_PROPELLER_CLANG\)      += scripts/Makefile.propeller) s
+5 379 M
+(+include-$\(CONFIG_GCC_PLUGINS\)  += scripts/Makefile.gcc-plugins) s
+5 368 M
+(+) s
+5 357 M
+(+include $\(addprefix $\(srctree\)/, $\(include-y\)\)) s
+5 346 M
+(+) s
+5 335 M
+(+# scripts/Makefile.gcc-plugins is intentionally included last.) s
+5 324 M
+(+# Do not add $\(call cc-option,...\) below this line. When you build the kernel) s
+5 313 M
+(+# from the clean source tree, the GCC plugins do not exist at this point.) s
+5 302 M
+(+) s
+5 291 M
+(+# Add user supplied CPPFLAGS, AFLAGS, CFLAGS and RUSTFLAGS as the last assignments) s
+5 280 M
+(+KBUILD_CPPFLAGS += $\(KCPPFLAGS\)) s
+5 269 M
+(+KBUILD_AFLAGS   += $\(KAFLAGS\)) s
+5 258 M
+(+KBUILD_CFLAGS   += $\(KCFLAGS\)) s
+5 247 M
+(+KBUILD_RUSTFLAGS += $\(KRUSTFLAGS\)) s
+5 236 M
+(+) s
+5 225 M
+(+KBUILD_LDFLAGS_MODULE += --build-id=sha1) s
+5 214 M
+(+LDFLAGS_vmlinux += --build-id=sha1) s
+5 203 M
+(+) s
+5 192 M
+(+KBUILD_LDFLAGS += -z noexecstack) s
+5 181 M
+(+ifeq \($\(CONFIG_LD_IS_BFD\),y\)) s
+5 170 M
+(+KBUILD_LDFLAGS += $\(call ld-option,--no-warn-rwx-segments\)) s
+5 159 M
+(+endif) s
+5 148 M
+(+) s
+5 137 M
+(+ifeq \($\(CONFIG_STRIP_ASM_SYMS\),y\)) s
+5 126 M
+(+LDFLAGS_vmlinux        += -X) s
+5 115 M
+(+endif) s
+5 104 M
+(+) s
+5 93 M
+(+ifeq \($\(CONFIG_RELR\),y\)) s
+5 82 M
+(+# ld.lld before 15 did not support -z pack-relative-relocs.) s
+5 71 M
+(+LDFLAGS_vmlinux        += $\(call ld-option,--pack-dyn-relocs=relr,-z pack-relative-relocs\)) s
+5 60 M
+(+endif) s
+5 49 M
+(+) s
+5 38 M
+(+# We never want expected sections to be placed heuristically by the) s
+5 27 M
+(+# linker. All sections should be explicitly named in the linker script.) s
+5 16 M
+(+ifdef CONFIG_LD_ORPHAN_WARN) s
+5 5 M
+(+LDFLAGS_vmlinux += --orphan-handling=$\(CONFIG_LD_ORPHAN_WARN_LEVEL\)) s
+_R
+S
+%%Page: (18) 18
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 18 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (18) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+endif) s
+5 731 M
+(+) s
+5 720 M
+(+# Align the bit size of userspace programs with the kernel) s
+5 709 M
+(+KBUILD_USERCFLAGS  += $\(filter -m32 -m64 --target=%, $\(KBUILD_CPPFLAGS\) $\(KBUILD_CFLAGS\)\)) s
+5 698 M
+(+KBUILD_USERLDFLAGS += $\(filter -m32 -m64 --target=%, $\(KBUILD_CPPFLAGS\) $\(KBUILD_CFLAGS\)\)) s
+5 687 M
+(+) s
+5 676 M
+(+# make the checker run with the right architecture) s
+5 665 M
+(+CHECKFLAGS += --arch=$\(ARCH\)) s
+5 654 M
+(+) s
+5 643 M
+(+# insure the checker run with the right endianness) s
+5 632 M
+(+CHECKFLAGS += $\(if $\(CONFIG_CPU_BIG_ENDIAN\),-mbig-endian,-mlittle-endian\)) s
+5 621 M
+(+) s
+5 610 M
+(+# the checker needs the correct machine size) s
+5 599 M
+(+CHECKFLAGS += $\(if $\(CONFIG_64BIT\),-m64,-m32\)) s
+5 588 M
+(+) s
+5 577 M
+(+# Default kernel image to build when no specific target is given.) s
+5 566 M
+(+# KBUILD_IMAGE may be overruled on the command line or) s
+5 555 M
+(+# set in the environment) s
+5 544 M
+(+# Also any assignments in arch/$\(ARCH\)/Makefile take precedence over) s
+5 533 M
+(+# this default value) s
+5 522 M
+(+export KBUILD_IMAGE ?= vmlinux) s
+5 511 M
+(+) s
+5 500 M
+(+#) s
+5 489 M
+(+# INSTALL_PATH specifies where to place the updated kernel and system map) s
+5 478 M
+(+# images. Default is /boot, but you can set it to other values) s
+5 467 M
+(+export INSTALL_PATH ?= /boot) s
+5 456 M
+(+) s
+5 445 M
+(+#) s
+5 434 M
+(+# INSTALL_DTBS_PATH specifies a prefix for relocations required by build roots.) s
+5 423 M
+(+# Like INSTALL_MOD_PATH, it isn't defined in the Makefile, but can be passed as) s
+5 412 M
+(+# an argument if needed. Otherwise it defaults to the kernel install path) s
+5 401 M
+(+#) s
+5 390 M
+(+export INSTALL_DTBS_PATH ?= $\(INSTALL_PATH\)/dtbs/$\(KERNELRELEASE\)) s
+5 379 M
+(+) s
+5 368 M
+(+#) s
+5 357 M
+(+# INSTALL_MOD_PATH specifies a prefix to MODLIB for module directory) s
+5 346 M
+(+# relocations required by build roots.  This is not defined in the) s
+5 335 M
+(+# makefile but the argument can be passed to make if needed.) s
+5 324 M
+(+#) s
+5 313 M
+(+) s
+5 302 M
+(+MODLIB = $\(INSTALL_MOD_PATH\)/lib/modules/$\(KERNELRELEASE\)) s
+5 291 M
+(+export MODLIB) s
+5 280 M
+(+) s
+5 269 M
+(+PHONY += prepare0) s
+5 258 M
+(+) s
+5 247 M
+(+ifeq \($\(KBUILD_EXTMOD\),\)) s
+5 236 M
+(+) s
+5 225 M
+(+build-dir      := .) s
+5 214 M
+(+clean-dirs     := $\(sort . Documentation \\) s
+5 203 M
+(+                    $\(patsubst %/,%,$\(filter %/, $\(core-\) \\) s
+5 192 M
+(+                       $\(drivers-\) $\(libs-\)\)\)\)) s
+5 181 M
+(+) s
+5 170 M
+(+export ARCH_CORE       := $\(core-y\)) s
+5 159 M
+(+export ARCH_LIB                := $\(filter %/, $\(libs-y\)\)) s
+5 148 M
+(+export ARCH_DRIVERS    := $\(drivers-y\) $\(drivers-m\)) s
+5 137 M
+(+# Externally visible symbols \(used by link-vmlinux.sh\)) s
+5 126 M
+(+) s
+5 115 M
+(+KBUILD_VMLINUX_OBJS := ./built-in.a) s
+5 104 M
+(+ifdef CONFIG_MODULES) s
+5 93 M
+(+KBUILD_VMLINUX_OBJS += $\(patsubst %/, %/lib.a, $\(filter %/, $\(libs-y\)\)\)) s
+5 82 M
+(+KBUILD_VMLINUX_LIBS := $\(filter-out %/, $\(libs-y\)\)) s
+5 71 M
+(+else) s
+5 60 M
+(+KBUILD_VMLINUX_LIBS := $\(patsubst %/,%/lib.a, $\(libs-y\)\)) s
+5 49 M
+(+endif) s
+5 38 M
+(+) s
+5 27 M
+(+export KBUILD_VMLINUX_LIBS) s
+5 16 M
+(+export KBUILD_LDS          := arch/$\(SRCARCH\)/kernel/vmlinux.lds) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (19) 19
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 19 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (19) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+ifdef CONFIG_TRIM_UNUSED_KSYMS) s
+5 731 M
+(+# For the kernel to actually contain only the needed exported symbols,) s
+5 720 M
+(+# we have to build modules as well to determine what those symbols are.) s
+5 709 M
+(+KBUILD_MODULES := 1) s
+5 698 M
+(+endif) s
+5 687 M
+(+) s
+5 676 M
+(+# '$\(AR\) mPi' needs 'T' to workaround the bug of llvm-ar <= 14) s
+5 665 M
+(+quiet_cmd_ar_vmlinux.a = AR      $@) s
+5 654 M
+(+      cmd_ar_vmlinux.a = \\) s
+5 643 M
+(+       rm -f $@; \\) s
+5 632 M
+(+       $\(AR\) cDPrST $@ $\(KBUILD_VMLINUX_OBJS\); \\) s
+5 621 M
+(+       $\(AR\) mPiT $$\($\(AR\) t $@ | sed -n 1p\) $@ $$\($\(AR\) t $@ | grep -F -f $\(srctree\)/scri) s
+5 610 M
+(pts/head-object-list.txt\)) s
+5 599 M
+(+) s
+5 588 M
+(+targets += vmlinux.a) s
+5 577 M
+(+vmlinux.a: $\(KBUILD_VMLINUX_OBJS\) scripts/head-object-list.txt FORCE) s
+5 566 M
+(+       $\(call if_changed,ar_vmlinux.a\)) s
+5 555 M
+(+) s
+5 544 M
+(+PHONY += vmlinux_o) s
+5 533 M
+(+vmlinux_o: vmlinux.a $\(KBUILD_VMLINUX_LIBS\)) s
+5 522 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.vmlinux_o) s
+5 511 M
+(+) s
+5 500 M
+(+vmlinux.o modules.builtin.modinfo modules.builtin: vmlinux_o) s
+5 489 M
+(+       @:) s
+5 478 M
+(+) s
+5 467 M
+(+PHONY += vmlinux) s
+5 456 M
+(+# LDFLAGS_vmlinux in the top Makefile defines linker flags for the top vmlinux,) s
+5 445 M
+(+# not for decompressors. LDFLAGS_vmlinux in arch/*/boot/compressed/Makefile is) s
+5 434 M
+(+# unrelated; the decompressors just happen to have the same base name,) s
+5 423 M
+(+# arch/*/boot/compressed/vmlinux.) s
+5 412 M
+(+# Export LDFLAGS_vmlinux only to scripts/Makefile.vmlinux.) s
+5 401 M
+(+#) s
+5 390 M
+(+# _LDFLAGS_vmlinux is a workaround for the 'private export' bug:) s
+5 379 M
+(+#   https://savannah.gnu.org/bugs/?61463) s
+5 368 M
+(+# For Make > 4.4, the following simple code will work:) s
+5 357 M
+(+#  vmlinux: private export LDFLAGS_vmlinux := $\(LDFLAGS_vmlinux\)) s
+5 346 M
+(+vmlinux: private _LDFLAGS_vmlinux := $\(LDFLAGS_vmlinux\)) s
+5 335 M
+(+vmlinux: export LDFLAGS_vmlinux = $\(_LDFLAGS_vmlinux\)) s
+5 324 M
+(+vmlinux: vmlinux.o $\(KBUILD_LDS\) modpost) s
+5 313 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.vmlinux) s
+5 302 M
+(+) s
+5 291 M
+(+# The actual objects are generated when descending,) s
+5 280 M
+(+# make sure no implicit rule kicks in) s
+5 269 M
+(+$\(sort $\(KBUILD_LDS\) $\(KBUILD_VMLINUX_OBJS\) $\(KBUILD_VMLINUX_LIBS\)\): . ;) s
+5 258 M
+(+) s
+5 247 M
+(+ifeq \($\(origin KERNELRELEASE\),file\)) s
+5 236 M
+(+filechk_kernel.release = $\(srctree\)/scripts/setlocalversion $\(srctree\)) s
+5 225 M
+(+else) s
+5 214 M
+(+filechk_kernel.release = echo $\(KERNELRELEASE\)) s
+5 203 M
+(+endif) s
+5 192 M
+(+) s
+5 181 M
+(+# Store \(new\) KERNELRELEASE string in include/config/kernel.release) s
+5 170 M
+(+include/config/kernel.release: FORCE) s
+5 159 M
+(+       $\(call filechk,kernel.release\)) s
+5 148 M
+(+) s
+5 137 M
+(+# Additional helpers built in scripts/) s
+5 126 M
+(+# Carefully list dependencies so we do not try to build scripts twice) s
+5 115 M
+(+# in parallel) s
+5 104 M
+(+PHONY += scripts) s
+5 93 M
+(+scripts: scripts_basic scripts_dtc) s
+5 82 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=$\(@\)) s
+5 71 M
+(+) s
+5 60 M
+(+# Things we need to do before we recursively start building the kernel) s
+5 49 M
+(+# or the modules are listed in "prepare".) s
+5 38 M
+(+# A multi level approach is used. prepareN is processed before prepareN-1.) s
+5 27 M
+(+# archprepare is used in arch Makefiles and when processed asm symlink,) s
+5 16 M
+(+# version.h and scripts_basic is processed / created.) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (20) 20
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 20 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (20) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+PHONY += prepare archprepare) s
+5 731 M
+(+) s
+5 720 M
+(+archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release ) s
+5 709 M
+(\\) s
+5 698 M
+(+       asm-generic $\(version_h\) include/generated/utsrelease.h \\) s
+5 687 M
+(+       include/generated/compile.h include/generated/autoconf.h \\) s
+5 676 M
+(+       include/generated/rustc_cfg remove-stale-files) s
+5 665 M
+(+) s
+5 654 M
+(+prepare0: archprepare) s
+5 643 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts/mod) s
+5 632 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=. prepare) s
+5 621 M
+(+) s
+5 610 M
+(+# All the preparing..) s
+5 599 M
+(+prepare: prepare0) s
+5 588 M
+(+ifdef CONFIG_RUST) s
+5 577 M
+(+       +$\(Q\)$\(CONFIG_SHELL\) $\(srctree\)/scripts/rust_is_available.sh) s
+5 566 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=rust) s
+5 555 M
+(+endif) s
+5 544 M
+(+) s
+5 533 M
+(+PHONY += remove-stale-files) s
+5 522 M
+(+remove-stale-files:) s
+5 511 M
+(+       $\(Q\)$\(srctree\)/scripts/remove-stale-files) s
+5 500 M
+(+) s
+5 489 M
+(+# Support for using generic headers in asm-generic) s
+5 478 M
+(+asm-generic := -f $\(srctree\)/scripts/Makefile.asm-headers obj) s
+5 467 M
+(+) s
+5 456 M
+(+PHONY += asm-generic uapi-asm-generic) s
+5 445 M
+(+asm-generic: uapi-asm-generic) s
+5 434 M
+(+       $\(Q\)$\(MAKE\) $\(asm-generic\)=arch/$\(SRCARCH\)/include/generated/asm \\) s
+5 423 M
+(+       generic=include/asm-generic) s
+5 412 M
+(+uapi-asm-generic:) s
+5 401 M
+(+       $\(Q\)$\(MAKE\) $\(asm-generic\)=arch/$\(SRCARCH\)/include/generated/uapi/asm \\) s
+5 390 M
+(+       generic=include/uapi/asm-generic) s
+5 379 M
+(+) s
+5 368 M
+(+# Generate some files) s
+5 357 M
+(+# ---------------------------------------------------------------------------) s
+5 346 M
+(+) s
+5 335 M
+(+# KERNELRELEASE can change from a few different places, meaning version.h) s
+5 324 M
+(+# needs to be updated, so this check is forced on all builds) s
+5 313 M
+(+) s
+5 302 M
+(+uts_len := 64) s
+5 291 M
+(+define filechk_utsrelease.h) s
+5 280 M
+(+       if [ `echo -n "$\(KERNELRELEASE\)" | wc -c ` -gt $\(uts_len\) ]; then \\) s
+5 269 M
+(+         echo '"$\(KERNELRELEASE\)" exceeds $\(uts_len\) characters' >&2;    \\) s
+5 258 M
+(+         exit 1;                                                         \\) s
+5 247 M
+(+       fi;                                                               \\) s
+5 236 M
+(+       echo \\#define UTS_RELEASE \\"$\(KERNELRELEASE\)\\") s
+5 225 M
+(+endef) s
+5 214 M
+(+) s
+5 203 M
+(+define filechk_version.h) s
+5 192 M
+(+       if [ $\(SUBLEVEL\) -gt 255 ]; then                                 \\) s
+5 181 M
+(+               echo \\#define LINUX_VERSION_CODE $\(shell                 \\) s
+5 170 M
+(+               expr $\(VERSION\) \\* 65536 + $\(PATCHLEVEL\) \\* 256 + 255\); \\) s
+5 159 M
+(+       else                                                             \\) s
+5 148 M
+(+               echo \\#define LINUX_VERSION_CODE $\(shell                 \\) s
+5 137 M
+(+               expr $\(VERSION\) \\* 65536 + $\(PATCHLEVEL\) \\* 256 + $\(SUBLEVEL\)\); \\) s
+5 126 M
+(+       fi;                                                              \\) s
+5 115 M
+(+       echo '#define KERNEL_VERSION\(a,b,c\) \(\(\(a\) << 16\) + \(\(b\) << 8\) +  \\) s
+5 104 M
+(+       \(\(c\) > 255 ? 255 : \(c\)\)\)';                                       \\) s
+5 93 M
+(+       echo \\#define LINUX_VERSION_MAJOR $\(VERSION\);                    \\) s
+5 82 M
+(+       echo \\#define LINUX_VERSION_PATCHLEVEL $\(PATCHLEVEL\);            \\) s
+5 71 M
+(+       echo \\#define LINUX_VERSION_SUBLEVEL $\(SUBLEVEL\)) s
+5 60 M
+(+endef) s
+5 49 M
+(+) s
+5 38 M
+(+$\(version_h\): private PATCHLEVEL := $\(or $\(PATCHLEVEL\), 0\)) s
+5 27 M
+(+$\(version_h\): private SUBLEVEL := $\(or $\(SUBLEVEL\), 0\)) s
+5 16 M
+(+$\(version_h\): FORCE) s
+5 5 M
+(+       $\(call filechk,version.h\)) s
+_R
+S
+%%Page: (21) 21
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 21 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (21) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+) s
+5 731 M
+(+include/generated/utsrelease.h: include/config/kernel.release FORCE) s
+5 720 M
+(+       $\(call filechk,utsrelease.h\)) s
+5 709 M
+(+) s
+5 698 M
+(+filechk_compile.h = $\(srctree\)/scripts/mkcompile_h \\) s
+5 687 M
+(+       "$\(UTS_MACHINE\)" "$\(CONFIG_CC_VERSION_TEXT\)" "$\(LD\)") s
+5 676 M
+(+) s
+5 665 M
+(+include/generated/compile.h: FORCE) s
+5 654 M
+(+       $\(call filechk,compile.h\)) s
+5 643 M
+(+) s
+5 632 M
+(+PHONY += headerdep) s
+5 621 M
+(+headerdep:) s
+5 610 M
+(+       $\(Q\)find $\(srctree\)/include/ -name '*.h' | xargs --max-args 1 \\) s
+5 599 M
+(+       $\(srctree\)/scripts/headerdep.pl -I$\(srctree\)/include) s
+5 588 M
+(+) s
+5 577 M
+(+# ---------------------------------------------------------------------------) s
+5 566 M
+(+# Kernel headers) s
+5 555 M
+(+) s
+5 544 M
+(+#Default location for installed headers) s
+5 533 M
+(+export INSTALL_HDR_PATH = $\(objtree\)/usr) s
+5 522 M
+(+) s
+5 511 M
+(+quiet_cmd_headers_install = INSTALL $\(INSTALL_HDR_PATH\)/include) s
+5 500 M
+(+      cmd_headers_install = \\) s
+5 489 M
+(+       mkdir -p $\(INSTALL_HDR_PATH\); \\) s
+5 478 M
+(+       rsync -mrl --include='*/' --include='*\\.h' --exclude='*' \\) s
+5 467 M
+(+       usr/include $\(INSTALL_HDR_PATH\)) s
+5 456 M
+(+) s
+5 445 M
+(+PHONY += headers_install) s
+5 434 M
+(+headers_install: headers) s
+5 423 M
+(+       $\(call cmd,headers_install\)) s
+5 412 M
+(+) s
+5 401 M
+(+PHONY += archheaders archscripts) s
+5 390 M
+(+) s
+5 379 M
+(+hdr-inst := -f $\(srctree\)/scripts/Makefile.headersinst obj) s
+5 368 M
+(+) s
+5 357 M
+(+PHONY += headers) s
+5 346 M
+(+headers: $\(version_h\) scripts_unifdef uapi-asm-generic archheaders archscripts) s
+5 335 M
+(+       $\(if $\(filter um, $\(SRCARCH\)\), $\(error Headers not exportable for UML\)\)) s
+5 324 M
+(+       $\(Q\)$\(MAKE\) $\(hdr-inst\)=include/uapi) s
+5 313 M
+(+       $\(Q\)$\(MAKE\) $\(hdr-inst\)=arch/$\(SRCARCH\)/include/uapi) s
+5 302 M
+(+) s
+5 291 M
+(+ifdef CONFIG_HEADERS_INSTALL) s
+5 280 M
+(+prepare: headers) s
+5 269 M
+(+endif) s
+5 258 M
+(+) s
+5 247 M
+(+PHONY += scripts_unifdef) s
+5 236 M
+(+scripts_unifdef: scripts_basic) s
+5 225 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts scripts/unifdef) s
+5 214 M
+(+) s
+5 203 M
+(+PHONY += scripts_gen_packed_field_checks) s
+5 192 M
+(+scripts_gen_packed_field_checks: scripts_basic) s
+5 181 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts scripts/gen_packed_field_checks) s
+5 170 M
+(+) s
+5 159 M
+(+# ---------------------------------------------------------------------------) s
+5 148 M
+(+# Install) s
+5 137 M
+(+) s
+5 126 M
+(+# Many distributions have the custom install script, /sbin/installkernel.) s
+5 115 M
+(+# If DKMS is installed, 'make install' will eventually recurse back) s
+5 104 M
+(+# to this Makefile to build and install external modules.) s
+5 93 M
+(+# Cancel sub_make_done so that options such as M=, V=, etc. are parsed.) s
+5 82 M
+(+) s
+5 71 M
+(+quiet_cmd_install = INSTALL $\(INSTALL_PATH\)) s
+5 60 M
+(+      cmd_install = unset sub_make_done; $\(srctree\)/scripts/install.sh) s
+5 49 M
+(+) s
+5 38 M
+(+# ---------------------------------------------------------------------------) s
+5 27 M
+(+# vDSO install) s
+5 16 M
+(+) s
+5 5 M
+(+PHONY += vdso_install) s
+_R
+S
+%%Page: (22) 22
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 22 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (22) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+vdso_install: export INSTALL_FILES = $\(vdso-install-y\)) s
+5 731 M
+(+vdso_install:) s
+5 720 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.vdsoinst) s
+5 709 M
+(+) s
+5 698 M
+(+# ---------------------------------------------------------------------------) s
+5 687 M
+(+# Tools) s
+5 676 M
+(+) s
+5 665 M
+(+ifdef CONFIG_OBJTOOL) s
+5 654 M
+(+prepare: tools/objtool) s
+5 643 M
+(+endif) s
+5 632 M
+(+) s
+5 621 M
+(+ifdef CONFIG_BPF) s
+5 610 M
+(+ifdef CONFIG_DEBUG_INFO_BTF) s
+5 599 M
+(+prepare: tools/bpf/resolve_btfids) s
+5 588 M
+(+endif) s
+5 577 M
+(+endif) s
+5 566 M
+(+) s
+5 555 M
+(+# The tools build system is not a part of Kbuild and tends to introduce) s
+5 544 M
+(+# its own unique issues. If you need to integrate a new tool into Kbuild,) s
+5 533 M
+(+# please consider locating that tool outside the tools/ tree and using the) s
+5 522 M
+(+# standard Kbuild "hostprogs" syntax instead of adding a new tools/* entry) s
+5 511 M
+(+# here. See Documentation/kbuild/makefiles.rst for details.) s
+5 500 M
+(+) s
+5 489 M
+(+PHONY += resolve_btfids_clean) s
+5 478 M
+(+) s
+5 467 M
+(+resolve_btfids_O = $\(abspath $\(objtree\)\)/tools/bpf/resolve_btfids) s
+5 456 M
+(+) s
+5 445 M
+(+# tools/bpf/resolve_btfids directory might not exist) s
+5 434 M
+(+# in output directory, skip its clean in that case) s
+5 423 M
+(+resolve_btfids_clean:) s
+5 412 M
+(+ifneq \($\(wildcard $\(resolve_btfids_O\)\),\)) s
+5 401 M
+(+       $\(Q\)$\(MAKE\) -sC $\(srctree\)/tools/bpf/resolve_btfids O=$\(resolve_btfids_O\) clean) s
+5 390 M
+(+endif) s
+5 379 M
+(+) s
+5 368 M
+(+tools/: FORCE) s
+5 357 M
+(+       $\(Q\)mkdir -p $\(objtree\)/tools) s
+5 346 M
+(+       $\(Q\)$\(MAKE\) LDFLAGS= O=$\(abspath $\(objtree\)\) subdir=tools -C $\(srctree\)/tools/) s
+5 335 M
+(+) s
+5 324 M
+(+tools/%: FORCE) s
+5 313 M
+(+       $\(Q\)mkdir -p $\(objtree\)/tools) s
+5 302 M
+(+       $\(Q\)$\(MAKE\) LDFLAGS= O=$\(abspath $\(objtree\)\) subdir=tools -C $\(srctree\)/tools/ $*) s
+5 291 M
+(+) s
+5 280 M
+(+# ---------------------------------------------------------------------------) s
+5 269 M
+(+# Kernel selftest) s
+5 258 M
+(+) s
+5 247 M
+(+PHONY += kselftest) s
+5 236 M
+(+kselftest: headers) s
+5 225 M
+(+       $\(Q\)$\(MAKE\) -C $\(srctree\)/tools/testing/selftests run_tests) s
+5 214 M
+(+) s
+5 203 M
+(+kselftest-%: headers FORCE) s
+5 192 M
+(+       $\(Q\)$\(MAKE\) -C $\(srctree\)/tools/testing/selftests $*) s
+5 181 M
+(+) s
+5 170 M
+(+PHONY += kselftest-merge) s
+5 159 M
+(+kselftest-merge:) s
+5 148 M
+(+       $\(if $\(wildcard $\(objtree\)/.config\),, $\(error No .config exists, config your kernel) s
+5 137 M
+( first!\)\)) s
+5 126 M
+(+       $\(Q\)find $\(srctree\)/tools/testing/selftests -name config -o -name config.$\(UTS_MACH) s
+5 115 M
+(INE\) | \\) s
+5 104 M
+(+               xargs $\(srctree\)/scripts/kconfig/merge_config.sh -y -m $\(objtree\)/.config) s
+5 93 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/Makefile olddefconfig) s
+5 82 M
+(+) s
+5 71 M
+(+# ---------------------------------------------------------------------------) s
+5 60 M
+(+# Devicetree files) s
+5 49 M
+(+) s
+5 38 M
+(+ifneq \($\(wildcard $\(srctree\)/arch/$\(SRCARCH\)/boot/dts/\),\)) s
+5 27 M
+(+dtstree := arch/$\(SRCARCH\)/boot/dts) s
+5 16 M
+(+endif) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (23) 23
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 23 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (23) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+ifneq \($\(dtstree\),\)) s
+5 731 M
+(+) s
+5 720 M
+(+%.dtb: dtbs_prepare) s
+5 709 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=$\(dtstree\) $\(dtstree\)/$@) s
+5 698 M
+(+) s
+5 687 M
+(+%.dtbo: dtbs_prepare) s
+5 676 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=$\(dtstree\) $\(dtstree\)/$@) s
+5 665 M
+(+) s
+5 654 M
+(+PHONY += dtbs dtbs_prepare dtbs_install dtbs_check) s
+5 643 M
+(+dtbs: dtbs_prepare) s
+5 632 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=$\(dtstree\) need-dtbslist=1) s
+5 621 M
+(+) s
+5 610 M
+(+# include/config/kernel.release is actually needed when installing DTBs because) s
+5 599 M
+(+# INSTALL_DTBS_PATH contains $\(KERNELRELEASE\). However, we do not want to make) s
+5 588 M
+(+# dtbs_install depend on it as dtbs_install may run as root.) s
+5 577 M
+(+dtbs_prepare: include/config/kernel.release scripts_dtc) s
+5 566 M
+(+) s
+5 555 M
+(+ifneq \($\(filter dtbs_check, $\(MAKECMDGOALS\)\),\)) s
+5 544 M
+(+export CHECK_DTBS=y) s
+5 533 M
+(+endif) s
+5 522 M
+(+) s
+5 511 M
+(+ifneq \($\(CHECK_DTBS\),\)) s
+5 500 M
+(+dtbs_prepare: dt_binding_schemas) s
+5 489 M
+(+endif) s
+5 478 M
+(+) s
+5 467 M
+(+dtbs_check: dtbs) s
+5 456 M
+(+) s
+5 445 M
+(+dtbs_install:) s
+5 434 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.dtbinst obj=$\(dtstree\)) s
+5 423 M
+(+) s
+5 412 M
+(+ifdef CONFIG_OF_EARLY_FLATTREE) s
+5 401 M
+(+all: dtbs) s
+5 390 M
+(+endif) s
+5 379 M
+(+) s
+5 368 M
+(+ifdef CONFIG_GENERIC_BUILTIN_DTB) s
+5 357 M
+(+vmlinux: dtbs) s
+5 346 M
+(+endif) s
+5 335 M
+(+) s
+5 324 M
+(+endif) s
+5 313 M
+(+) s
+5 302 M
+(+PHONY += scripts_dtc) s
+5 291 M
+(+scripts_dtc: scripts_basic) s
+5 280 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts/dtc) s
+5 269 M
+(+) s
+5 258 M
+(+ifneq \($\(filter dt_binding_check, $\(MAKECMDGOALS\)\),\)) s
+5 247 M
+(+export CHECK_DTBS=y) s
+5 236 M
+(+endif) s
+5 225 M
+(+) s
+5 214 M
+(+PHONY += dt_binding_check dt_binding_schemas) s
+5 203 M
+(+dt_binding_check: dt_binding_schemas scripts_dtc) s
+5 192 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=Documentation/devicetree/bindings $@) s
+5 181 M
+(+) s
+5 170 M
+(+dt_binding_schemas:) s
+5 159 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=Documentation/devicetree/bindings) s
+5 148 M
+(+) s
+5 137 M
+(+PHONY += dt_compatible_check) s
+5 126 M
+(+dt_compatible_check: dt_binding_schemas) s
+5 115 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=Documentation/devicetree/bindings $@) s
+5 104 M
+(+) s
+5 93 M
+(+# ---------------------------------------------------------------------------) s
+5 82 M
+(+# Modules) s
+5 71 M
+(+) s
+5 60 M
+(+ifdef CONFIG_MODULES) s
+5 49 M
+(+) s
+5 38 M
+(+# By default, build modules as well) s
+5 27 M
+(+) s
+5 16 M
+(+all: modules) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (24) 24
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 24 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (24) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+# When we're building modules with modversions, we need to consider) s
+5 731 M
+(+# the built-in objects during the descend as well, in order to) s
+5 720 M
+(+# make sure the checksums are up to date before we record them.) s
+5 709 M
+(+ifdef CONFIG_MODVERSIONS) s
+5 698 M
+(+  KBUILD_BUILTIN := 1) s
+5 687 M
+(+endif) s
+5 676 M
+(+) s
+5 665 M
+(+# Build modules) s
+5 654 M
+(+#) s
+5 643 M
+(+) s
+5 632 M
+(+# *.ko are usually independent of vmlinux, but CONFIG_DEBUG_INFO_BTF_MODULES) s
+5 621 M
+(+# is an exception.) s
+5 610 M
+(+ifdef CONFIG_DEBUG_INFO_BTF_MODULES) s
+5 599 M
+(+KBUILD_BUILTIN := 1) s
+5 588 M
+(+modules: vmlinux) s
+5 577 M
+(+endif) s
+5 566 M
+(+) s
+5 555 M
+(+modules: modules_prepare) s
+5 544 M
+(+) s
+5 533 M
+(+# Target to prepare building external modules) s
+5 522 M
+(+modules_prepare: prepare) s
+5 511 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts scripts/module.lds) s
+5 500 M
+(+) s
+5 489 M
+(+endif # CONFIG_MODULES) s
+5 478 M
+(+) s
+5 467 M
+(+###) s
+5 456 M
+(+# Cleaning is done on three levels.) s
+5 445 M
+(+# make clean     Delete most generated files) s
+5 434 M
+(+#                Leave enough to build external modules) s
+5 423 M
+(+# make mrproper  Delete the current configuration, and all generated files) s
+5 412 M
+(+# make distclean Remove editor backup files, patch leftover files and the like) s
+5 401 M
+(+) s
+5 390 M
+(+# Directories & files removed with 'make clean') s
+5 379 M
+(+CLEAN_FILES += vmlinux.symvers modules-only.symvers \\) s
+5 368 M
+(+              modules.builtin modules.builtin.modinfo modules.nsdeps \\) s
+5 357 M
+(+              modules.builtin.ranges vmlinux.o.map \\) s
+5 346 M
+(+              compile_commands.json rust/test \\) s
+5 335 M
+(+              rust-project.json .vmlinux.objs .vmlinux.export.c \\) s
+5 324 M
+(+               .builtin-dtbs-list .builtin-dtb.S) s
+5 313 M
+(+) s
+5 302 M
+(+# Directories & files removed with 'make mrproper') s
+5 291 M
+(+MRPROPER_FILES += include/config include/generated          \\) s
+5 280 M
+(+                 arch/$\(SRCARCH\)/include/generated .objdiff \\) s
+5 269 M
+(+                 debian snap tar-install PKGBUILD pacman \\) s
+5 258 M
+(+                 .config .config.old .version \\) s
+5 247 M
+(+                 Module.symvers \\) s
+5 236 M
+(+                 certs/signing_key.pem \\) s
+5 225 M
+(+                 certs/x509.genkey \\) s
+5 214 M
+(+                 vmlinux-gdb.py \\) s
+5 203 M
+(+                 rpmbuild \\) s
+5 192 M
+(+                 rust/libmacros.so rust/libmacros.dylib) s
+5 181 M
+(+) s
+5 170 M
+(+# clean - Delete most, but leave enough to build external modules) s
+5 159 M
+(+#) s
+5 148 M
+(+clean: private rm-files := $\(CLEAN_FILES\)) s
+5 137 M
+(+) s
+5 126 M
+(+PHONY += archclean vmlinuxclean) s
+5 115 M
+(+) s
+5 104 M
+(+vmlinuxclean:) s
+5 93 M
+(+       $\(Q\)$\(CONFIG_SHELL\) $\(srctree\)/scripts/link-vmlinux.sh clean) s
+5 82 M
+(+       $\(Q\)$\(if $\(ARCH_POSTLINK\), $\(MAKE\) -f $\(ARCH_POSTLINK\) clean\)) s
+5 71 M
+(+) s
+5 60 M
+(+clean: archclean vmlinuxclean resolve_btfids_clean) s
+5 49 M
+(+) s
+5 38 M
+(+# mrproper - Delete all generated files, including .config) s
+5 27 M
+(+#) s
+5 16 M
+(+mrproper: private rm-files := $\(MRPROPER_FILES\)) s
+5 5 M
+(+mrproper-dirs      := $\(addprefix _mrproper_,scripts\)) s
+_R
+S
+%%Page: (25) 25
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 25 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (25) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+) s
+5 731 M
+(+PHONY += $\(mrproper-dirs\) mrproper) s
+5 720 M
+(+$\(mrproper-dirs\):) s
+5 709 M
+(+       $\(Q\)$\(MAKE\) $\(clean\)=$\(patsubst _mrproper_%,%,$@\)) s
+5 698 M
+(+) s
+5 687 M
+(+mrproper: clean $\(mrproper-dirs\)) s
+5 676 M
+(+       $\(call cmd,rmfiles\)) s
+5 665 M
+(+       @find . $\(RCS_FIND_IGNORE\) \\) s
+5 654 M
+(+               \\\( -name '*.rmeta' \\\) \\) s
+5 643 M
+(+               -type f -print | xargs rm -f) s
+5 632 M
+(+) s
+5 621 M
+(+# distclean) s
+5 610 M
+(+#) s
+5 599 M
+(+PHONY += distclean) s
+5 588 M
+(+) s
+5 577 M
+(+distclean: mrproper) s
+5 566 M
+(+       @find . $\(RCS_FIND_IGNORE\) \\) s
+5 555 M
+(+               \\\( -name '*.orig' -o -name '*.rej' -o -name '*~' \\) s
+5 544 M
+(+               -o -name '*.bak' -o -name '#*#' -o -name '*%' \\) s
+5 533 M
+(+               -o -name 'core' -o -name tags -o -name TAGS -o -name 'cscope*' \\) s
+5 522 M
+(+               -o -name GPATH -o -name GRTAGS -o -name GSYMS -o -name GTAGS \\\) \\) s
+5 511 M
+(+               -type f -print | xargs rm -f) s
+5 500 M
+(+) s
+5 489 M
+(+) s
+5 478 M
+(+# Packaging of the kernel to various formats) s
+5 467 M
+(+# ---------------------------------------------------------------------------) s
+5 456 M
+(+) s
+5 445 M
+(+%src-pkg: FORCE) s
+5 434 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.package $@) s
+5 423 M
+(+%pkg: include/config/kernel.release FORCE) s
+5 412 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.package $@) s
+5 401 M
+(+) s
+5 390 M
+(+# Brief documentation of the typical targets used) s
+5 379 M
+(+# ---------------------------------------------------------------------------) s
+5 368 M
+(+) s
+5 357 M
+(+boards := $\(wildcard $\(srctree\)/arch/$\(SRCARCH\)/configs/*_defconfig\)) s
+5 346 M
+(+boards := $\(sort $\(notdir $\(boards\)\)\)) s
+5 335 M
+(+board-dirs := $\(dir $\(wildcard $\(srctree\)/arch/$\(SRCARCH\)/configs/*/*_defconfig\)\)) s
+5 324 M
+(+board-dirs := $\(sort $\(notdir $\(board-dirs:/=\)\)\)) s
+5 313 M
+(+) s
+5 302 M
+(+PHONY += help) s
+5 291 M
+(+help:) s
+5 280 M
+(+       @echo  'Cleaning targets:') s
+5 269 M
+(+       @echo  '  clean           - Remove most generated files but keep the config and') s
+5 258 M
+(+       @echo  '                    enough build support to build external modules') s
+5 247 M
+(+       @echo  '  mrproper        - Remove all generated files + config + various backup fi) s
+5 236 M
+(les') s
+5 225 M
+(+       @echo  '  distclean       - mrproper + remove editor backup and patch files') s
+5 214 M
+(+       @echo  '') s
+5 203 M
+(+       @$\(MAKE\) -f $\(srctree\)/scripts/kconfig/Makefile help) s
+5 192 M
+(+       @echo  '') s
+5 181 M
+(+       @echo  'Other generic targets:') s
+5 170 M
+(+       @echo  '  all             - Build all targets marked with [*]') s
+5 159 M
+(+       @echo  '* vmlinux         - Build the bare kernel') s
+5 148 M
+(+       @echo  '* modules         - Build all modules') s
+5 137 M
+(+       @echo  '  modules_install - Install all modules to INSTALL_MOD_PATH \(default: /\)') s
+5 126 M
+(+       @echo  '  vdso_install    - Install unstripped vdso to INSTALL_MOD_PATH \(default: /) s
+5 115 M
+(\)') s
+5 104 M
+(+       @echo  '  dir/            - Build all files in dir and below') s
+5 93 M
+(+       @echo  '  dir/file.[ois]  - Build specified target only') s
+5 82 M
+(+       @echo  '  dir/file.ll     - Build the LLVM assembly file') s
+5 71 M
+(+       @echo  '                    \(requires compiler support for LLVM assembly generation) s
+5 60 M
+(\)') s
+5 49 M
+(+       @echo  '  dir/file.lst    - Build specified mixed source/assembly target only') s
+5 38 M
+(+       @echo  '                    \(requires a recent binutils and recent build \(System.ma) s
+5 27 M
+(p\)\)') s
+5 16 M
+(+       @echo  '  dir/file.ko     - Build module including final link') s
+5 5 M
+(+       @echo  '  modules_prepare - Set up for building external modules') s
+_R
+S
+%%Page: (26) 26
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 26 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (26) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+       @echo  '  tags/TAGS       - Generate tags file for editors') s
+5 731 M
+(+       @echo  '  cscope          - Generate cscope index') s
+5 720 M
+(+       @echo  '  gtags           - Generate GNU GLOBAL index') s
+5 709 M
+(+       @echo  '  kernelrelease   - Output the release version string \(use with make -s\)') s
+5 698 M
+(+       @echo  '  kernelversion   - Output the version stored in Makefile \(use with make -s) s
+5 687 M
+(\)') s
+5 676 M
+(+       @echo  '  image_name      - Output the image name \(use with make -s\)') s
+5 665 M
+(+       @echo  '  headers_install - Install sanitised kernel headers to INSTALL_HDR_PATH'; ) s
+5 654 M
+(\\) s
+5 643 M
+(+        echo  '                    \(default: $\(INSTALL_HDR_PATH\)\)'; \\) s
+5 632 M
+(+        echo  '') s
+5 621 M
+(+       @echo  'Static analysers:') s
+5 610 M
+(+       @echo  '  checkstack      - Generate a list of stack hogs and consider all function) s
+5 599 M
+(s') s
+5 588 M
+(+       @echo  '                    with a stack size larger than MINSTACKSIZE \(default: 10) s
+5 577 M
+(0\)') s
+5 566 M
+(+       @echo  '  versioncheck    - Sanity check on version.h usage') s
+5 555 M
+(+       @echo  '  includecheck    - Check for duplicate included header files') s
+5 544 M
+(+       @echo  '  headerdep       - Detect inclusion cycles in headers') s
+5 533 M
+(+       @echo  '  coccicheck      - Check with Coccinelle') s
+5 522 M
+(+       @echo  '  clang-analyzer  - Check with clang static analyzer') s
+5 511 M
+(+       @echo  '  clang-tidy      - Check with clang-tidy') s
+5 500 M
+(+       @echo  '') s
+5 489 M
+(+       @echo  'Tools:') s
+5 478 M
+(+       @echo  '  nsdeps          - Generate missing symbol namespace dependencies') s
+5 467 M
+(+       @echo  '') s
+5 456 M
+(+       @echo  'Kernel selftest:') s
+5 445 M
+(+       @echo  '  kselftest         - Build and run kernel selftest') s
+5 434 M
+(+       @echo  '                      Build, install, and boot kernel before') s
+5 423 M
+(+       @echo  '                      running kselftest on it') s
+5 412 M
+(+       @echo  '                      Run as root for full coverage') s
+5 401 M
+(+       @echo  '  kselftest-all     - Build kernel selftest') s
+5 390 M
+(+       @echo  '  kselftest-install - Build and install kernel selftest') s
+5 379 M
+(+       @echo  '  kselftest-clean   - Remove all generated kselftest files') s
+5 368 M
+(+       @echo  '  kselftest-merge   - Merge all the config dependencies of') s
+5 357 M
+(+       @echo  '                      kselftest to existing .config.') s
+5 346 M
+(+       @echo  '') s
+5 335 M
+(+       @echo  'Rust targets:') s
+5 324 M
+(+       @echo  '  rustavailable   - Checks whether the Rust toolchain is') s
+5 313 M
+(+       @echo  '                    available and, if not, explains why.') s
+5 302 M
+(+       @echo  '  rustfmt         - Reformat all the Rust code in the kernel') s
+5 291 M
+(+       @echo  '  rustfmtcheck    - Checks if all the Rust code in the kernel') s
+5 280 M
+(+       @echo  '                    is formatted, printing a diff otherwise.') s
+5 269 M
+(+       @echo  '  rustdoc         - Generate Rust documentation') s
+5 258 M
+(+       @echo  '                    \(requires kernel .config\)') s
+5 247 M
+(+       @echo  '  rusttest        - Runs the Rust tests') s
+5 236 M
+(+       @echo  '                    \(requires kernel .config; downloads external repos\)') s
+5 225 M
+(+       @echo  '  rust-analyzer   - Generate rust-project.json rust-analyzer support file') s
+5 214 M
+(+       @echo  '                    \(requires kernel .config\)') s
+5 203 M
+(+       @echo  '  dir/file.[os]   - Build specified target only') s
+5 192 M
+(+       @echo  '  dir/file.rsi    - Build macro expanded source, similar to C preprocessing) s
+5 181 M
+(.') s
+5 170 M
+(+       @echo  '                    Run with RUSTFMT=n to skip reformatting if needed.') s
+5 159 M
+(+       @echo  '                    The output is not intended to be compilable.') s
+5 148 M
+(+       @echo  '  dir/file.ll     - Build the LLVM assembly file') s
+5 137 M
+(+       @echo  '') s
+5 126 M
+(+       @$\(if $\(dtstree\), \\) s
+5 115 M
+(+               echo 'Devicetree:'; \\) s
+5 104 M
+(+               echo '* dtbs               - Build device tree blobs for enabled boards'; \\) s
+5 93 M
+(+               echo '  dtbs_install       - Install dtbs to $\(INSTALL_DTBS_PATH\)'; \\) s
+5 82 M
+(+               echo '  dt_binding_check   - Validate device tree binding documents and exa) s
+5 71 M
+(mples'; \\) s
+5 60 M
+(+               echo '  dt_binding_schemas - Build processed device tree binding schemas'; ) s
+5 49 M
+(\\) s
+5 38 M
+(+               echo '  dtbs_check         - Validate device tree source files';\\) s
+5 27 M
+(+               echo ''\)) s
+5 16 M
+(+) s
+5 5 M
+(+       @echo 'Userspace tools targets:') s
+_R
+S
+%%Page: (27) 27
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 27 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (27) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+       @echo '  use "make tools/help"') s
+5 731 M
+(+       @echo '  or  "cd tools; make help"') s
+5 720 M
+(+       @echo  '') s
+5 709 M
+(+       @echo  'Kernel packaging:') s
+5 698 M
+(+       @$\(MAKE\) -f $\(srctree\)/scripts/Makefile.package help) s
+5 687 M
+(+       @echo  '') s
+5 676 M
+(+       @echo  'Documentation targets:') s
+5 665 M
+(+       @$\(MAKE\) -f $\(srctree\)/Documentation/Makefile dochelp) s
+5 654 M
+(+       @echo  '') s
+5 643 M
+(+       @echo  'Architecture-specific targets \($\(SRCARCH\)\):') s
+5 632 M
+(+       @$\(or $\(archhelp\),\\) s
+5 621 M
+(+               echo '  No architecture-specific help defined for $\(SRCARCH\)'\)) s
+5 610 M
+(+       @echo  '') s
+5 599 M
+(+       @$\(if $\(boards\), \\) s
+5 588 M
+(+               $\(foreach b, $\(boards\), \\) s
+5 577 M
+(+               printf "  %-27s - Build for %s\\\\n" $\(b\) $\(subst _defconfig,,$\(b\)\);\) \\) s
+5 566 M
+(+               echo ''\)) s
+5 555 M
+(+       @$\(if $\(board-dirs\), \\) s
+5 544 M
+(+               $\(foreach b, $\(board-dirs\), \\) s
+5 533 M
+(+               printf "  %-16s - Show %s-specific targets\\\\n" help-$\(b\) $\(b\);\) \\) s
+5 522 M
+(+               printf "  %-16s - Show all of the above\\\\n" help-boards; \\) s
+5 511 M
+(+               echo ''\)) s
+5 500 M
+(+) s
+5 489 M
+(+       @echo  '  make V=n   [targets] 1: verbose build') s
+5 478 M
+(+       @echo  '                       2: give reason for rebuild of target') s
+5 467 M
+(+       @echo  '                       V=1 and V=2 can be combined with V=12') s
+5 456 M
+(+       @echo  '  make O=dir [targets] Locate all output files in "dir", including .config') s
+5 445 M
+(+       @echo  '  make C=1   [targets] Check re-compiled c source with $$CHECK') s
+5 434 M
+(+       @echo  '                       \(sparse by default\)') s
+5 423 M
+(+       @echo  '  make C=2   [targets] Force check of all c source with $$CHECK') s
+5 412 M
+(+       @echo  '  make RECORDMCOUNT_WARN=1 [targets] Warn about ignored mcount sections') s
+5 401 M
+(+       @echo  '  make W=n   [targets] Enable extra build checks, n=1,2,3,c,e where') s
+5 390 M
+(+       @echo  '                1: warnings which may be relevant and do not occur too ofte) s
+5 379 M
+(n') s
+5 368 M
+(+       @echo  '                2: warnings which occur quite often but may still be releva) s
+5 357 M
+(nt') s
+5 346 M
+(+       @echo  '                3: more obscure warnings, can most likely be ignored') s
+5 335 M
+(+       @echo  '                c: extra checks in the configuration stage \(Kconfig\)') s
+5 324 M
+(+       @echo  '                e: warnings are being treated as errors') s
+5 313 M
+(+       @echo  '                Multiple levels can be combined with W=12 or W=123') s
+5 302 M
+(+       @$\(if $\(dtstree\), \\) s
+5 291 M
+(+               echo '  make CHECK_DTBS=1 [targets] Check all generated dtb files against s) s
+5 280 M
+(chema'; \\) s
+5 269 M
+(+               echo '         This can be applied both to "dtbs" and to individual "foo.dt) s
+5 258 M
+(b" targets' ; \\) s
+5 247 M
+(+               \)) s
+5 236 M
+(+       @echo  '') s
+5 225 M
+(+       @echo  'Execute "make" or "make all" to build all targets marked with [*] ') s
+5 214 M
+(+       @echo  'For further info see the ./README file') s
+5 203 M
+(+) s
+5 192 M
+(+) s
+5 181 M
+(+help-board-dirs := $\(addprefix help-,$\(board-dirs\)\)) s
+5 170 M
+(+) s
+5 159 M
+(+help-boards: $\(help-board-dirs\)) s
+5 148 M
+(+) s
+5 137 M
+(+boards-per-dir = $\(sort $\(notdir $\(wildcard $\(srctree\)/arch/$\(SRCARCH\)/configs/$*/*_defcon) s
+5 126 M
+(fig\)\)\)) s
+5 115 M
+(+) s
+5 104 M
+(+$\(help-board-dirs\): help-%:) s
+5 93 M
+(+       @echo  'Architecture-specific targets \($\(SRCARCH\) $*\):') s
+5 82 M
+(+       @$\(if $\(boards-per-dir\), \\) s
+5 71 M
+(+               $\(foreach b, $\(boards-per-dir\), \\) s
+5 60 M
+(+               printf "  %-24s - Build for %s\\\\n" $*/$\(b\) $\(subst _defconfig,,$\(b\)\);\) \\) s
+5 49 M
+(+               echo ''\)) s
+5 38 M
+(+) s
+5 27 M
+(+) s
+5 16 M
+(+# Documentation targets) s
+5 5 M
+(+# ---------------------------------------------------------------------------) s
+_R
+S
+%%Page: (28) 28
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 28 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (28) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+DOC_TARGETS := xmldocs latexdocs pdfdocs htmldocs epubdocs cleandocs \\) s
+5 731 M
+(+              linkcheckdocs dochelp refcheckdocs texinfodocs infodocs) s
+5 720 M
+(+PHONY += $\(DOC_TARGETS\)) s
+5 709 M
+(+$\(DOC_TARGETS\):) s
+5 698 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=Documentation $@) s
+5 687 M
+(+) s
+5 676 M
+(+) s
+5 665 M
+(+# Rust targets) s
+5 654 M
+(+# ---------------------------------------------------------------------------) s
+5 643 M
+(+) s
+5 632 M
+(+# "Is Rust available?" target) s
+5 621 M
+(+PHONY += rustavailable) s
+5 610 M
+(+rustavailable:) s
+5 599 M
+(+       +$\(Q\)$\(CONFIG_SHELL\) $\(srctree\)/scripts/rust_is_available.sh && echo "Rust is avail) s
+5 588 M
+(able!") s
+5 577 M
+(+) s
+5 566 M
+(+# Documentation target) s
+5 555 M
+(+#) s
+5 544 M
+(+# Using the singular to avoid running afoul of `no-dot-config-targets`.) s
+5 533 M
+(+PHONY += rustdoc) s
+5 522 M
+(+rustdoc: prepare) s
+5 511 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=rust $@) s
+5 500 M
+(+) s
+5 489 M
+(+# Testing target) s
+5 478 M
+(+PHONY += rusttest) s
+5 467 M
+(+rusttest: prepare) s
+5 456 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=rust $@) s
+5 445 M
+(+) s
+5 434 M
+(+# Formatting targets) s
+5 423 M
+(+PHONY += rustfmt rustfmtcheck) s
+5 412 M
+(+) s
+5 401 M
+(+rustfmt:) s
+5 390 M
+(+       $\(Q\)find $\(srctree\) $\(RCS_FIND_IGNORE\) \\) s
+5 379 M
+(+               -type f -a -name '*.rs' -a ! -name '*generated*' -print \\) s
+5 368 M
+(+               | xargs $\(RUSTFMT\) $\(rustfmt_flags\)) s
+5 357 M
+(+) s
+5 346 M
+(+rustfmtcheck: rustfmt_flags = --check) s
+5 335 M
+(+rustfmtcheck: rustfmt) s
+5 324 M
+(+) s
+5 313 M
+(+# Misc) s
+5 302 M
+(+# ---------------------------------------------------------------------------) s
+5 291 M
+(+) s
+5 280 M
+(+PHONY += misc-check) s
+5 269 M
+(+misc-check:) s
+5 258 M
+(+       $\(Q\)$\(srctree\)/scripts/misc-check) s
+5 247 M
+(+) s
+5 236 M
+(+all: misc-check) s
+5 225 M
+(+) s
+5 214 M
+(+PHONY += scripts_gdb) s
+5 203 M
+(+scripts_gdb: prepare0) s
+5 192 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=scripts/gdb) s
+5 181 M
+(+       $\(Q\)ln -fsn $\(abspath $\(srctree\)/scripts/gdb/vmlinux-gdb.py\)) s
+5 170 M
+(+) s
+5 159 M
+(+ifdef CONFIG_GDB_SCRIPTS) s
+5 148 M
+(+all: scripts_gdb) s
+5 137 M
+(+endif) s
+5 126 M
+(+) s
+5 115 M
+(+else # KBUILD_EXTMOD) s
+5 104 M
+(+) s
+5 93 M
+(+filechk_kernel.release = echo $\(KERNELRELEASE\)) s
+5 82 M
+(+) s
+5 71 M
+(+###) s
+5 60 M
+(+# External module support.) s
+5 49 M
+(+# When building external modules the kernel used as basis is considered) s
+5 38 M
+(+# read-only, and no consistency checks are made and the make) s
+5 27 M
+(+# system is not used on the basis kernel. If updates are required) s
+5 16 M
+(+# in the basis kernel ordinary make commands \(without M=...\) must be used.) s
+5 5 M
+(+) s
+_R
+S
+%%Page: (29) 29
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 29 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (29) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+# We are always building only modules.) s
+5 731 M
+(+KBUILD_BUILTIN :=) s
+5 720 M
+(+KBUILD_MODULES := 1) s
+5 709 M
+(+) s
+5 698 M
+(+build-dir := .) s
+5 687 M
+(+) s
+5 676 M
+(+clean-dirs := .) s
+5 665 M
+(+clean: private rm-files := Module.symvers modules.nsdeps compile_commands.json) s
+5 654 M
+(+) s
+5 643 M
+(+PHONY += prepare) s
+5 632 M
+(+# now expand this into a simple variable to reduce the cost of shell evaluations) s
+5 621 M
+(+prepare: CC_VERSION_TEXT := $\(CC_VERSION_TEXT\)) s
+5 610 M
+(+prepare:) s
+5 599 M
+(+       @if [ "$\(CC_VERSION_TEXT\)" != "$\(CONFIG_CC_VERSION_TEXT\)" ]; then \\) s
+5 588 M
+(+               echo >&2 "warning: the compiler differs from the one used to build the kern) s
+5 577 M
+(el"; \\) s
+5 566 M
+(+               echo >&2 "  The kernel was built by: $\(CONFIG_CC_VERSION_TEXT\)"; \\) s
+5 555 M
+(+               echo >&2 "  You are using:           $\(CC_VERSION_TEXT\)"; \\) s
+5 544 M
+(+       fi) s
+5 533 M
+(+) s
+5 522 M
+(+PHONY += help) s
+5 511 M
+(+help:) s
+5 500 M
+(+       @echo  '  Building external modules.') s
+5 489 M
+(+       @echo  '  Syntax: make -C path/to/kernel/src M=$$PWD target') s
+5 478 M
+(+       @echo  '') s
+5 467 M
+(+       @echo  '  modules         - default target, build the module\(s\)') s
+5 456 M
+(+       @echo  '  modules_install - install the module') s
+5 445 M
+(+       @echo  '  clean           - remove generated files in module directory only') s
+5 434 M
+(+       @echo  '  rust-analyzer   - generate rust-project.json rust-analyzer support file') s
+5 423 M
+(+       @echo  '') s
+5 412 M
+(+) s
+5 401 M
+(+ifndef CONFIG_MODULES) s
+5 390 M
+(+modules modules_install: __external_modules_error) s
+5 379 M
+(+__external_modules_error:) s
+5 368 M
+(+       @echo >&2 '***') s
+5 357 M
+(+       @echo >&2 '*** The present kernel disabled CONFIG_MODULES.') s
+5 346 M
+(+       @echo >&2 '*** You cannot build or install external modules.') s
+5 335 M
+(+       @echo >&2 '***') s
+5 324 M
+(+       @false) s
+5 313 M
+(+endif) s
+5 302 M
+(+) s
+5 291 M
+(+endif # KBUILD_EXTMOD) s
+5 280 M
+(+) s
+5 269 M
+(+# ---------------------------------------------------------------------------) s
+5 258 M
+(+# Modules) s
+5 247 M
+(+) s
+5 236 M
+(+PHONY += modules modules_install modules_sign modules_prepare) s
+5 225 M
+(+) s
+5 214 M
+(+modules_install:) s
+5 203 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.modinst \\) s
+5 192 M
+(+       sign-only=$\(if $\(filter modules_install,$\(MAKECMDGOALS\)\),,y\)) s
+5 181 M
+(+) s
+5 170 M
+(+ifeq \($\(CONFIG_MODULE_SIG\),y\)) s
+5 159 M
+(+# modules_sign is a subset of modules_install.) s
+5 148 M
+(+# 'make modules_install modules_sign' is equivalent to 'make modules_install'.) s
+5 137 M
+(+modules_sign: modules_install) s
+5 126 M
+(+       @:) s
+5 115 M
+(+else) s
+5 104 M
+(+modules_sign:) s
+5 93 M
+(+       @echo >&2 '***') s
+5 82 M
+(+       @echo >&2 '*** CONFIG_MODULE_SIG is disabled. You cannot sign modules.') s
+5 71 M
+(+       @echo >&2 '***') s
+5 60 M
+(+       @false) s
+5 49 M
+(+endif) s
+5 38 M
+(+) s
+5 27 M
+(+ifdef CONFIG_MODULES) s
+5 16 M
+(+) s
+5 5 M
+(+modules.order: $\(build-dir\)) s
+_R
+S
+%%Page: (30) 30
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 30 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (30) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+       @:) s
+5 731 M
+(+) s
+5 720 M
+(+# KBUILD_MODPOST_NOFINAL can be set to skip the final link of modules.) s
+5 709 M
+(+# This is solely useful to speed up test compiles.) s
+5 698 M
+(+modules: modpost) s
+5 687 M
+(+ifneq \($\(KBUILD_MODPOST_NOFINAL\),1\)) s
+5 676 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.modfinal) s
+5 665 M
+(+endif) s
+5 654 M
+(+) s
+5 643 M
+(+PHONY += modules_check) s
+5 632 M
+(+modules_check: modules.order) s
+5 621 M
+(+       $\(Q\)$\(CONFIG_SHELL\) $\(srctree\)/scripts/modules-check.sh $<) s
+5 610 M
+(+) s
+5 599 M
+(+else # CONFIG_MODULES) s
+5 588 M
+(+) s
+5 577 M
+(+modules:) s
+5 566 M
+(+       @:) s
+5 555 M
+(+) s
+5 544 M
+(+KBUILD_MODULES :=) s
+5 533 M
+(+) s
+5 522 M
+(+endif # CONFIG_MODULES) s
+5 511 M
+(+) s
+5 500 M
+(+PHONY += modpost) s
+5 489 M
+(+modpost: $\(if $\(single-build\),, $\(if $\(KBUILD_BUILTIN\), vmlinux.o\)\) \\) s
+5 478 M
+(+        $\(if $\(KBUILD_MODULES\), modules_check\)) s
+5 467 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.modpost) s
+5 456 M
+(+) s
+5 445 M
+(+# Single targets) s
+5 434 M
+(+# ---------------------------------------------------------------------------) s
+5 423 M
+(+# To build individual files in subdirectories, you can do like this:) s
+5 412 M
+(+#) s
+5 401 M
+(+#   make foo/bar/baz.s) s
+5 390 M
+(+#) s
+5 379 M
+(+# The supported suffixes for single-target are listed in 'single-targets') s
+5 368 M
+(+#) s
+5 357 M
+(+# To build only under specific subdirectories, you can do like this:) s
+5 346 M
+(+#) s
+5 335 M
+(+#   make foo/bar/baz/) s
+5 324 M
+(+) s
+5 313 M
+(+ifdef single-build) s
+5 302 M
+(+) s
+5 291 M
+(+# .ko is special because modpost is needed) s
+5 280 M
+(+single-ko := $\(sort $\(filter %.ko, $\(MAKECMDGOALS\)\)\)) s
+5 269 M
+(+single-no-ko := $\(filter-out $\(single-ko\), $\(MAKECMDGOALS\)\) \\) s
+5 258 M
+(+               $\(foreach x, o mod, $\(patsubst %.ko, %.$x, $\(single-ko\)\)\)) s
+5 247 M
+(+) s
+5 236 M
+(+$\(single-ko\): single_modules) s
+5 225 M
+(+       @:) s
+5 214 M
+(+$\(single-no-ko\): $\(build-dir\)) s
+5 203 M
+(+       @:) s
+5 192 M
+(+) s
+5 181 M
+(+# Remove modules.order when done because it is not the real one.) s
+5 170 M
+(+PHONY += single_modules) s
+5 159 M
+(+single_modules: $\(single-no-ko\) modules_prepare) s
+5 148 M
+(+       $\(Q\){ $\(foreach m, $\(single-ko\), echo $\(m:%.ko=%.o\);\) } > modules.order) s
+5 137 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.modpost) s
+5 126 M
+(+ifneq \($\(KBUILD_MODPOST_NOFINAL\),1\)) s
+5 115 M
+(+       $\(Q\)$\(MAKE\) -f $\(srctree\)/scripts/Makefile.modfinal) s
+5 104 M
+(+endif) s
+5 93 M
+(+       $\(Q\)rm -f modules.order) s
+5 82 M
+(+) s
+5 71 M
+(+single-goals := $\(addprefix $\(build-dir\)/, $\(single-no-ko\)\)) s
+5 60 M
+(+) s
+5 49 M
+(+KBUILD_MODULES := 1) s
+5 38 M
+(+) s
+5 27 M
+(+endif) s
+5 16 M
+(+) s
+5 5 M
+(+prepare: outputmakefile) s
+_R
+S
+%%Page: (31) 31
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 31 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (31) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+) s
+5 731 M
+(+# Preset locale variables to speed up the build process. Limit locale) s
+5 720 M
+(+# tweaks to this spot to avoid wrong language settings when running) s
+5 709 M
+(+# make menuconfig etc.) s
+5 698 M
+(+# Error messages still appears in the original language) s
+5 687 M
+(+PHONY += $\(build-dir\)) s
+5 676 M
+(+$\(build-dir\): prepare) s
+5 665 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=$@ need-builtin=1 need-modorder=1 $\(single-goals\)) s
+5 654 M
+(+) s
+5 643 M
+(+clean-dirs := $\(addprefix _clean_, $\(clean-dirs\)\)) s
+5 632 M
+(+PHONY += $\(clean-dirs\) clean) s
+5 621 M
+(+$\(clean-dirs\):) s
+5 610 M
+(+       $\(Q\)$\(MAKE\) $\(clean\)=$\(patsubst _clean_%,%,$@\)) s
+5 599 M
+(+) s
+5 588 M
+(+clean: $\(clean-dirs\)) s
+5 577 M
+(+       $\(call cmd,rmfiles\)) s
+5 566 M
+(+       @find . $\(RCS_FIND_IGNORE\) \\) s
+5 555 M
+(+               \\\( -name '*.[aios]' -o -name '*.rsi' -o -name '*.ko' -o -name '.*.cmd' \\) s
+5 544 M
+(+               -o -name '*.ko.*' \\) s
+5 533 M
+(+               -o -name '*.dtb' -o -name '*.dtbo' \\) s
+5 522 M
+(+               -o -name '*.dtb.S' -o -name '*.dtbo.S' \\) s
+5 511 M
+(+               -o -name '*.dt.yaml' -o -name 'dtbs-list' \\) s
+5 500 M
+(+               -o -name '*.dwo' -o -name '*.lst' \\) s
+5 489 M
+(+               -o -name '*.su' -o -name '*.mod' \\) s
+5 478 M
+(+               -o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \\) s
+5 467 M
+(+               -o -name '*.lex.c' -o -name '*.tab.[ch]' \\) s
+5 456 M
+(+               -o -name '*.asn1.[ch]' \\) s
+5 445 M
+(+               -o -name '*.symtypes' -o -name 'modules.order' \\) s
+5 434 M
+(+               -o -name '*.c.[012]*.*' \\) s
+5 423 M
+(+               -o -name '*.ll' \\) s
+5 412 M
+(+               -o -name '*.gcno' \\) s
+5 401 M
+(+               \\\) -type f -print \\) s
+5 390 M
+(+               -o -name '.tmp_*' -print \\) s
+5 379 M
+(+               | xargs rm -rf) s
+5 368 M
+(+) s
+5 357 M
+(+# Generate tags for editors) s
+5 346 M
+(+# ---------------------------------------------------------------------------) s
+5 335 M
+(+quiet_cmd_tags = GEN     $@) s
+5 324 M
+(+      cmd_tags = $\(BASH\) $\(srctree\)/scripts/tags.sh $@) s
+5 313 M
+(+) s
+5 302 M
+(+tags TAGS cscope gtags: FORCE) s
+5 291 M
+(+       $\(call cmd,tags\)) s
+5 280 M
+(+) s
+5 269 M
+(+# Generate rust-project.json \(a file that describes the structure of non-Cargo) s
+5 258 M
+(+# Rust projects\) for rust-analyzer \(an implementation of the Language Server) s
+5 247 M
+(+# Protocol\).) s
+5 236 M
+(+PHONY += rust-analyzer) s
+5 225 M
+(+rust-analyzer:) s
+5 214 M
+(+       +$\(Q\)$\(CONFIG_SHELL\) $\(srctree\)/scripts/rust_is_available.sh) s
+5 203 M
+(+ifdef KBUILD_EXTMOD) s
+5 192 M
+(+# FIXME: external modules must not descend into a sub-directory of the kernel) s
+5 181 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=$\(objtree\)/rust src=$\(srctree\)/rust $@) s
+5 170 M
+(+else) s
+5 159 M
+(+       $\(Q\)$\(MAKE\) $\(build\)=rust $@) s
+5 148 M
+(+endif) s
+5 137 M
+(+) s
+5 126 M
+(+# Script to generate missing namespace dependencies) s
+5 115 M
+(+# ---------------------------------------------------------------------------) s
+5 104 M
+(+) s
+5 93 M
+(+PHONY += nsdeps) s
+5 82 M
+(+nsdeps: export KBUILD_NSDEPS=1) s
+5 71 M
+(+nsdeps: modules) s
+5 60 M
+(+       $\(Q\)$\(CONFIG_SHELL\) $\(srctree\)/scripts/nsdeps) s
+5 49 M
+(+) s
+5 38 M
+(+# Clang Tooling) s
+5 27 M
+(+# ---------------------------------------------------------------------------) s
+5 16 M
+(+) s
+5 5 M
+(+quiet_cmd_gen_compile_commands = GEN     $@) s
+_R
+S
+%%Page: (32) 32
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 32 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (32) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+      cmd_gen_compile_commands = $\(PYTHON3\) $< -a $\(AR\) -o $@ $\(filter-out $<, $\(real-prer) s
+5 731 M
+(eqs\)\)) s
+5 720 M
+(+) s
+5 709 M
+(+compile_commands.json: $\(srctree\)/scripts/clang-tools/gen_compile_commands.py \\) s
+5 698 M
+(+       $\(if $\(KBUILD_EXTMOD\),, vmlinux.a $\(KBUILD_VMLINUX_LIBS\)\) \\) s
+5 687 M
+(+       $\(if $\(CONFIG_MODULES\), modules.order\) FORCE) s
+5 676 M
+(+       $\(call if_changed,gen_compile_commands\)) s
+5 665 M
+(+) s
+5 654 M
+(+targets += compile_commands.json) s
+5 643 M
+(+) s
+5 632 M
+(+PHONY += clang-tidy clang-analyzer) s
+5 621 M
+(+) s
+5 610 M
+(+ifdef CONFIG_CC_IS_CLANG) s
+5 599 M
+(+quiet_cmd_clang_tools = CHECK   $<) s
+5 588 M
+(+      cmd_clang_tools = $\(PYTHON3\) $\(srctree\)/scripts/clang-tools/run-clang-tools.py $@ $<) s
+5 577 M
+(+) s
+5 566 M
+(+clang-tidy clang-analyzer: compile_commands.json) s
+5 555 M
+(+       $\(call cmd,clang_tools\)) s
+5 544 M
+(+else) s
+5 533 M
+(+clang-tidy clang-analyzer:) s
+5 522 M
+(+       @echo "$@ requires CC=clang" >&2) s
+5 511 M
+(+       @false) s
+5 500 M
+(+endif) s
+5 489 M
+(+) s
+5 478 M
+(+# Scripts to check various things for consistency) s
+5 467 M
+(+# ---------------------------------------------------------------------------) s
+5 456 M
+(+) s
+5 445 M
+(+PHONY += includecheck versioncheck coccicheck) s
+5 434 M
+(+) s
+5 423 M
+(+includecheck:) s
+5 412 M
+(+       find $\(srctree\)/* $\(RCS_FIND_IGNORE\) \\) s
+5 401 M
+(+               -name '*.[hcS]' -type f -print | sort \\) s
+5 390 M
+(+               | xargs $\(PERL\) -w $\(srctree\)/scripts/checkincludes.pl) s
+5 379 M
+(+) s
+5 368 M
+(+versioncheck:) s
+5 357 M
+(+       find $\(srctree\)/* $\(RCS_FIND_IGNORE\) \\) s
+5 346 M
+(+               -name '*.[hcS]' -type f -print | sort \\) s
+5 335 M
+(+               | xargs $\(PERL\) -w $\(srctree\)/scripts/checkversion.pl) s
+5 324 M
+(+) s
+5 313 M
+(+coccicheck:) s
+5 302 M
+(+       $\(Q\)$\(BASH\) $\(srctree\)/scripts/$@) s
+5 291 M
+(+) s
+5 280 M
+(+PHONY += checkstack kernelrelease kernelversion image_name) s
+5 269 M
+(+) s
+5 258 M
+(+# UML needs a little special treatment here.  It wants to use the host) s
+5 247 M
+(+# toolchain, so needs $\(SUBARCH\) passed to checkstack.pl.  Everyone) s
+5 236 M
+(+# else wants $\(ARCH\), including people doing cross-builds, which means) s
+5 225 M
+(+# that $\(SUBARCH\) doesn't work here.) s
+5 214 M
+(+ifeq \($\(ARCH\), um\)) s
+5 203 M
+(+CHECKSTACK_ARCH := $\(SUBARCH\)) s
+5 192 M
+(+else) s
+5 181 M
+(+CHECKSTACK_ARCH := $\(ARCH\)) s
+5 170 M
+(+endif) s
+5 159 M
+(+MINSTACKSIZE   ?= 100) s
+5 148 M
+(+checkstack:) s
+5 137 M
+(+       $\(OBJDUMP\) -d vmlinux $$\(find . -name '*.ko'\) | \\) s
+5 126 M
+(+       $\(PERL\) $\(srctree\)/scripts/checkstack.pl $\(CHECKSTACK_ARCH\) $\(MINSTACKSIZE\)) s
+5 115 M
+(+) s
+5 104 M
+(+kernelrelease:) s
+5 93 M
+(+       @$\(filechk_kernel.release\)) s
+5 82 M
+(+) s
+5 71 M
+(+kernelversion:) s
+5 60 M
+(+       @echo $\(KERNELVERSION\)) s
+5 49 M
+(+) s
+5 38 M
+(+image_name:) s
+5 27 M
+(+       @echo $\(KBUILD_IMAGE\)) s
+5 16 M
+(+) s
+5 5 M
+(+PHONY += run-command) s
+_R
+S
+%%Page: (33) 33
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 33 def
+/fname (0001-Modify-extra-version-in-makefile.patch) def
+/fdir (.) def
+/ftail (0001-Modify-extra-version-in-makefile.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 17:01:28 2025) def
+/pagenumstr (33) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+run-command:) s
+5 731 M
+(+       $\(Q\)$\(KBUILD_RUN_COMMAND\)) s
+5 720 M
+(+) s
+5 709 M
+(+quiet_cmd_rmfiles = $\(if $\(wildcard $\(rm-files\)\),CLEAN   $\(wildcard $\(rm-files\)\)\)) s
+5 698 M
+(+      cmd_rmfiles = rm -rf $\(rm-files\)) s
+5 687 M
+(+) s
+5 676 M
+(+# read saved command lines for existing targets) s
+5 665 M
+(+existing-targets := $\(wildcard $\(sort $\(targets\)\)\)) s
+5 654 M
+(+) s
+5 643 M
+(+-include $\(foreach f,$\(existing-targets\),$\(dir $\(f\)\).$\(notdir $\(f\)\).cmd\)) s
+5 632 M
+(+) s
+5 621 M
+(+endif # config-build) s
+5 610 M
+(+endif # mixed-build) s
+5 599 M
+(+endif # need-sub-make) s
+5 588 M
+(+) s
+5 577 M
+(+PHONY += FORCE) s
+5 566 M
+(+FORCE:) s
+5 555 M
+(+) s
+5 544 M
+(+# Declare the contents of the PHONY variable as phony.  We keep that) s
+5 533 M
+(+# information in a variable so we can use it in if_changed and friends.) s
+5 522 M
+(+.PHONY: $\(PHONY\)) s
+5 511 M
+(diff --git a/extra-kernel-version/dmesg_output.txt b/extra-kernel-version/dmesg_output.txt) s
+5 500 M
+(new file mode 100644) s
+5 489 M
+(index 0000000..03c47da) s
+5 478 M
+(--- /dev/null) s
+5 467 M
+(+++ b/extra-kernel-version/dmesg_output.txt) s
+5 456 M
+(@@ -0,0 +1 @@) s
+5 445 M
+(+[    0.000000] Linux version 6.14.0extra-kernel-version-task+ \(gabriel-shahrouzi@gabriel-s) s
+5 434 M
+(hahrouzi-Virtual-Machine\) \(gcc \(Ubuntu 14.2.0-4ubuntu2\) 14.2.0, GNU ld \(GNU Binutils for Ub) s
+5 423 M
+(untu\) 2.43.1\) #2 SMP PREEMPT_DYNAMIC Sun Feb 23 15:49:27 EST 2025) s
+5 412 M
+(-- ) s
+5 401 M
+(2.45.2) s
+_R
+S
+%%Trailer
+%%Pages: 33
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

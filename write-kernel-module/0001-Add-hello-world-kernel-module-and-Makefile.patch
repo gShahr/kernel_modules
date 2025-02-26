@@ -1,0 +1,57 @@
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Date: Thu, 20 Feb 2025 13:05:19 -0500
+
+The kernel module prints a message on load and unload.
+
+Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+---
+ Makefile |  7 +++++++
+ hello.c  | 22 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 Makefile
+ create mode 100644 hello.c
+
+diff --git a/Makefile b/Makefile
+new file mode 100644
+index 0000000..87d1bde
+--- /dev/null
++++ b/Makefile
+@@ -0,0 +1,7 @@
++obj-m += hello.o
++
++all:
++	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
++
++clean:
++	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+diff --git a/hello.c b/hello.c
+new file mode 100644
+index 0000000..2d57f81
+--- /dev/null
++++ b/hello.c
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Gabriel Shahrouzi");
++MODULE_DESCRIPTION("Says hello on load and bye when removed");
++
++static int __init hello_init(void)
++{
++	pr_info("Hello\n");
++	return 0;
++}
++
++static void __exit hello_exit(void)
++{
++	pr_info("Bye\n");
++}
++
++module_init(hello_init);
++module_exit(hello_exit);
+-- 
+2.45.2
+

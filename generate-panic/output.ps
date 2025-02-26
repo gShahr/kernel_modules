@@ -1,0 +1,2301 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 577 806
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Sun Feb 23 14:56:28 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6.5 90
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 559 def
+/d_page_h 770 def
+/d_header_x 0 def
+/d_header_y 755 def
+/d_header_w 559 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 559 def
+/d_footer_h 0 def
+/d_output_w 559 def
+/d_output_h 755 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 1 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(From b54c78f9c923c151786507971976ae60138726ed Mon Sep 17 00:00:00 2001) s
+5 731 M
+(From: Gabriel <gshahrouzi@gmail.com>) s
+5 720 M
+(Date: Sun, 23 Feb 2025 14:37:37 -0500) s
+5 709 M
+(Subject: [PATCH] Generate panic module and log output) s
+5 687 M
+(Complete the generate panic task.) s
+5 665 M
+(Signed-off-by: Gabriel <gshahrouzi@gmail.com>) s
+5 654 M
+(---) s
+5 643 M
+( generate-panic/full_dmesg_output.txt | 598 +++++++++++++++++++++++++++) s
+5 632 M
+( generate-panic/panic.c               |  24 ++) s
+5 621 M
+( 2 files changed, 622 insertions\(+\)) s
+5 610 M
+( create mode 100644 generate-panic/full_dmesg_output.txt) s
+5 599 M
+( create mode 100644 generate-panic/panic.c) s
+5 577 M
+(diff --git a/generate-panic/full_dmesg_output.txt b/generate-panic/full_dmesg_output.txt) s
+5 566 M
+(new file mode 100644) s
+5 555 M
+(index 0000000..fb16372) s
+5 544 M
+(--- /dev/null) s
+5 533 M
+(+++ b/generate-panic/full_dmesg_output.txt) s
+5 522 M
+(@@ -0,0 +1,598 @@) s
+5 511 M
+(+[    0.000000] Linux version 6.14.0-rc3+ \(gabriel-shahrouzi@gabriel-shahrouzi-Virtual-Mach) s
+5 500 M
+(ine\) \(gcc \(Ubuntu 14.2.0-4ubuntu2\) 14.2.0, GNU ld \(GNU Binutils for Ubuntu\) 2.43.1\) #1 SMP ) s
+5 489 M
+(PREEMPT_DYNAMIC Wed Feb 19 23:34:15 EST 2025) s
+5 478 M
+(+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-6.14.0-rc3+ root=UUID=a635049a-e7f4-) s
+5 467 M
+(4ae1-a115-c89c17c95de1 ro earlyprintk=vga quiet splash crashkernel=2G-4G:320M,4G-32G:512M,3) s
+5 456 M
+(2G-64G:1024M,64G-128G:2048M,128G-:4096M vt.handoff=7) s
+5 445 M
+(+[    0.000000] KERNEL supported cpus:) s
+5 434 M
+(+[    0.000000]   Intel GenuineIntel) s
+5 423 M
+(+[    0.000000]   AMD AuthenticAMD) s
+5 412 M
+(+[    0.000000]   Hygon HygonGenuine) s
+5 401 M
+(+[    0.000000]   Centaur CentaurHauls) s
+5 390 M
+(+[    0.000000]   zhaoxin   Shanghai  ) s
+5 379 M
+(+[    0.000000] BIOS-provided physical RAM map:) s
+5 368 M
+(+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable) s
+5 357 M
+(+[    0.000000] BIOS-e820: [mem 0x00000000000c0000-0x00000000000fffff] reserved) s
+5 346 M
+(+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000f7f40fff] usable) s
+5 335 M
+(+[    0.000000] BIOS-e820: [mem 0x00000000f7f41000-0x00000000f7fc4fff] reserved) s
+5 324 M
+(+[    0.000000] BIOS-e820: [mem 0x00000000f7fc5000-0x00000000f7fd1fff] usable) s
+5 313 M
+(+[    0.000000] BIOS-e820: [mem 0x00000000f7fd2000-0x00000000f7ffafff] ACPI data) s
+5 302 M
+(+[    0.000000] BIOS-e820: [mem 0x00000000f7ffb000-0x00000000f7ffefff] ACPI NVS) s
+5 291 M
+(+[    0.000000] BIOS-e820: [mem 0x00000000f7fff000-0x00000000f7ffffff] usable) s
+5 280 M
+(+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x0000000207ffffff] usable) s
+5 269 M
+(+[    0.000000] NX \(Execute Disable\) protection: active) s
+5 258 M
+(+[    0.000000] APIC: Static calls initialized) s
+5 247 M
+(+[    0.000000] efi: EFI v2.7 by Microsoft) s
+5 236 M
+(+[    0.000000] efi: ACPI=0xf7ffa000 ACPI 2.0=0xf7ffa014 SMBIOS=0xf7f85000 SMBIOS 3.0=0xf7f) s
+5 225 M
+(83000 MEMATTR=0xf7500518 MOKvar=0xf7f81000 INITRD=0xf6b40418 RNG=0xf7fd3018 ) s
+5 214 M
+(+[    0.000000] random: crng init done) s
+5 203 M
+(+[    0.000000] SMBIOS 3.1.0 present.) s
+5 192 M
+(+[    0.000000] DMI: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UE) s
+5 181 M
+(FI Release v4.1 05/13/2024) s
+5 170 M
+(+[    0.000000] DMI: Memory slots populated: 2/2) s
+5 159 M
+(+[    0.000000] Hypervisor detected: Microsoft Hyper-V) s
+5 148 M
+(+[    0.000000] Hyper-V: privilege flags low 0xae7f, high 0x3b8030, hints 0x9a0e24, misc 0x) s
+5 137 M
+(e0bed7b2) s
+5 126 M
+(+[    0.000000] Hyper-V: Nested features: 0x0) s
+5 115 M
+(+[    0.000000] Hyper-V: LAPIC Timer Frequency: 0x30d40) s
+5 104 M
+(+[    0.000000] Hyper-V: Using hypercall for remote TLB flush) s
+5 93 M
+(+[    0.000000] clocksource: hyperv_clocksource_tsc_page: mask: 0xffffffffffffffff max_cycl) s
+5 82 M
+(es: 0x24e6a1710, max_idle_ns: 440795202120 ns) s
+5 71 M
+(+[    0.000000] clocksource: hyperv_clocksource_msr: mask: 0xffffffffffffffff max_cycles: 0) s
+5 60 M
+(x24e6a1710, max_idle_ns: 440795202120 ns) s
+5 49 M
+(+[    0.000000] tsc: Detected 2687.998 MHz processor) s
+5 38 M
+(+[    0.000007] e820: update [mem 0x00000000-0x00000fff] usable ==> reserved) s
+5 27 M
+(+[    0.000010] e820: remove [mem 0x000a0000-0x000fffff] usable) s
+5 16 M
+(+[    0.000017] last_pfn = 0x208000 max_arch_pfn = 0x400000000) s
+5 5 M
+(+[    0.000051] MTRR map: 3 entries \(2 fixed + 1 variable; max 18\), built from 8 variable M) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 2 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(TRRs) s
+5 731 M
+(+[    0.000054] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  ) s
+5 720 M
+(+[    0.000097] last_pfn = 0xf8000 max_arch_pfn = 0x400000000) s
+5 709 M
+(+[    0.008851] Using GB pages for direct mapping) s
+5 698 M
+(+[    0.009101] Secure boot disabled) s
+5 687 M
+(+[    0.009102] RAMDISK: [mem 0xf0e99000-0xf2a84fff]) s
+5 676 M
+(+[    0.009115] ACPI: Early table checksum verification disabled) s
+5 665 M
+(+[    0.009119] ACPI: RSDP 0x00000000F7FFA014 000024 \(v02 VRTUAL\)) s
+5 654 M
+(+[    0.009124] ACPI: XSDT 0x00000000F7FF90E8 000054 \(v01 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 643 M
+(00001\)) s
+5 632 M
+(+[    0.009129] ACPI: FACP 0x00000000F7FF8000 000114 \(v06 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 621 M
+(00001\)) s
+5 610 M
+(+[    0.009135] ACPI: DSDT 0x00000000F7FD7000 01E191 \(v02 MSFTVM DSDT01   00000001 MSFT 050) s
+5 599 M
+(00000\)) s
+5 588 M
+(+[    0.009138] ACPI: FACS 0x00000000F7FFE000 000040) s
+5 577 M
+(+[    0.009141] ACPI: OEM0 0x00000000F7FF7000 000064 \(v01 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 566 M
+(00001\)) s
+5 555 M
+(+[    0.009143] ACPI: WAET 0x00000000F7FF6000 000028 \(v01 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 544 M
+(00001\)) s
+5 533 M
+(+[    0.009146] ACPI: APIC 0x00000000F7FD6000 000098 \(v04 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 522 M
+(00001\)) s
+5 511 M
+(+[    0.009149] ACPI: SRAT 0x00000000F7FD5000 000350 \(v02 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 500 M
+(00001\)) s
+5 489 M
+(+[    0.009151] ACPI: BGRT 0x00000000F7FD4000 000038 \(v01 VRTUAL MICROSFT 00000001 MSFT 000) s
+5 478 M
+(00001\)) s
+5 467 M
+(+[    0.009153] ACPI: Reserving FACP table memory at [mem 0xf7ff8000-0xf7ff8113]) s
+5 456 M
+(+[    0.009155] ACPI: Reserving DSDT table memory at [mem 0xf7fd7000-0xf7ff5190]) s
+5 445 M
+(+[    0.009156] ACPI: Reserving FACS table memory at [mem 0xf7ffe000-0xf7ffe03f]) s
+5 434 M
+(+[    0.009156] ACPI: Reserving OEM0 table memory at [mem 0xf7ff7000-0xf7ff7063]) s
+5 423 M
+(+[    0.009157] ACPI: Reserving WAET table memory at [mem 0xf7ff6000-0xf7ff6027]) s
+5 412 M
+(+[    0.009158] ACPI: Reserving APIC table memory at [mem 0xf7fd6000-0xf7fd6097]) s
+5 401 M
+(+[    0.009159] ACPI: Reserving SRAT table memory at [mem 0xf7fd5000-0xf7fd534f]) s
+5 390 M
+(+[    0.009159] ACPI: Reserving BGRT table memory at [mem 0xf7fd4000-0xf7fd4037]) s
+5 379 M
+(+[    0.009201] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0xf7ffffff] hotplug) s
+5 368 M
+(+[    0.009204] ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0x207ffffff] hotplug) s
+5 357 M
+(+[    0.009205] ACPI: SRAT: Node 0 PXM 0 [mem 0x208000000-0xfdfffffff] hotplug) s
+5 346 M
+(+[    0.009206] ACPI: SRAT: Node 0 PXM 0 [mem 0x1000000000-0xffffffffff] hotplug) s
+5 335 M
+(+[    0.009207] ACPI: SRAT: Node 0 PXM 0 [mem 0x10000000000-0x1ffffffffff] hotplug) s
+5 324 M
+(+[    0.009208] ACPI: SRAT: Node 0 PXM 0 [mem 0x20000000000-0x3ffffffffff] hotplug) s
+5 313 M
+(+[    0.009209] ACPI: SRAT: Node 0 PXM 0 [mem 0x40000000000-0x7ffffffffff] hotplug) s
+5 302 M
+(+[    0.009210] ACPI: SRAT: Node 0 PXM 0 [mem 0x80000000000-0xfffffffffff] hotplug) s
+5 291 M
+(+[    0.009211] ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000000-0x1fffffffffff] hotplug) s
+5 280 M
+(+[    0.009212] ACPI: SRAT: Node 0 PXM 0 [mem 0x200000000000-0x3fffffffffff] hotplug) s
+5 269 M
+(+[    0.009213] ACPI: SRAT: Node 0 PXM 0 [mem 0x400000000000-0x7fffffffffff] hotplug) s
+5 258 M
+(+[    0.009213] ACPI: SRAT: Node 0 PXM 0 [mem 0x800000000000-0xffffffffffff] hotplug) s
+5 247 M
+(+[    0.009214] ACPI: SRAT: Node 0 PXM 0 [mem 0x1000000000000-0x1ffffffffffff] hotplug) s
+5 236 M
+(+[    0.009215] ACPI: SRAT: Node 0 PXM 0 [mem 0x2000000000000-0x3ffffffffffff] hotplug) s
+5 225 M
+(+[    0.009216] ACPI: SRAT: Node 0 PXM 0 [mem 0x4000000000000-0x7ffffffffffff] hotplug) s
+5 214 M
+(+[    0.009217] ACPI: SRAT: Node 0 PXM 0 [mem 0x8000000000000-0xfffffffffffff] hotplug) s
+5 203 M
+(+[    0.009221] NUMA: Node 0 [mem 0x00001000-0xf7ffffff] + [mem 0x100000000-0x207ffffff] ->) s
+5 192 M
+( [mem 0x00001000-0x207ffffff]) s
+5 181 M
+(+[    0.009230] NODE_DATA\(0\) allocated [mem 0x207fd3680-0x207ffdfff]) s
+5 170 M
+(+[    0.009422] crashkernel reserved: 0x00000000d0000000 - 0x00000000f0000000 \(512 MB\)) s
+5 159 M
+(+[    0.009441] Zone ranges:) s
+5 148 M
+(+[    0.009442]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]) s
+5 137 M
+(+[    0.009444]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]) s
+5 126 M
+(+[    0.009445]   Normal   [mem 0x0000000100000000-0x0000000207ffffff]) s
+5 115 M
+(+[    0.009447]   Device   empty) s
+5 104 M
+(+[    0.009448] Movable zone start for each node) s
+5 93 M
+(+[    0.009449] Early memory node ranges) s
+5 82 M
+(+[    0.009450]   node   0: [mem 0x0000000000001000-0x000000000009ffff]) s
+5 71 M
+(+[    0.009451]   node   0: [mem 0x0000000000100000-0x00000000f7f40fff]) s
+5 60 M
+(+[    0.009452]   node   0: [mem 0x00000000f7fc5000-0x00000000f7fd1fff]) s
+5 49 M
+(+[    0.009453]   node   0: [mem 0x00000000f7fff000-0x00000000f7ffffff]) s
+5 38 M
+(+[    0.009454]   node   0: [mem 0x0000000100000000-0x0000000207ffffff]) s
+5 27 M
+(+[    0.009455] Initmem setup node 0 [mem 0x0000000000001000-0x0000000207ffffff]) s
+5 16 M
+(+[    0.009461] On node 0, zone DMA: 1 pages in unavailable ranges) s
+5 5 M
+(+[    0.009480] On node 0, zone DMA: 96 pages in unavailable ranges) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 3 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+[    0.014372] On node 0, zone DMA32: 132 pages in unavailable ranges) s
+5 731 M
+(+[    0.014374] On node 0, zone DMA32: 45 pages in unavailable ranges) s
+5 720 M
+(+[    0.019668] ACPI: PM-Timer IO Port: 0x408) s
+5 709 M
+(+[    0.019682] ACPI: LAPIC_NMI \(acpi_id[0x01] dfl dfl lint[0x1]\)) s
+5 698 M
+(+[    0.019944] IOAPIC[0]: apic_id 10, version 17, address 0xfec00000, GSI 0-23) s
+5 687 M
+(+[    0.019948] ACPI: INT_SRC_OVR \(bus 0 bus_irq 9 global_irq 9 high level\)) s
+5 676 M
+(+[    0.019954] ACPI: Using ACPI \(MADT\) for SMP configuration information) s
+5 665 M
+(+[    0.019962] e820: update [mem 0xf6c2c000-0xf6c32fff] usable ==> reserved) s
+5 654 M
+(+[    0.019972] TSC deadline timer available) s
+5 643 M
+(+[    0.019976] CPU topo: Max. logical packages:   1) s
+5 632 M
+(+[    0.019977] CPU topo: Max. logical dies:       1) s
+5 621 M
+(+[    0.019977] CPU topo: Max. dies per package:   1) s
+5 610 M
+(+[    0.019980] CPU topo: Max. threads per core:   2) s
+5 599 M
+(+[    0.019981] CPU topo: Num. cores per package:     5) s
+5 588 M
+(+[    0.019982] CPU topo: Num. threads per package:  10) s
+5 577 M
+(+[    0.019983] CPU topo: Allowing 10 present CPUs plus 0 hotplug CPUs) s
+5 566 M
+(+[    0.019995] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]) s
+5 555 M
+(+[    0.019997] PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000bffff]) s
+5 544 M
+(+[    0.019998] PM: hibernation: Registered nosave memory: [mem 0x000c0000-0x000fffff]) s
+5 533 M
+(+[    0.019999] PM: hibernation: Registered nosave memory: [mem 0xf6c2c000-0xf6c32fff]) s
+5 522 M
+(+[    0.020000] PM: hibernation: Registered nosave memory: [mem 0xf7f41000-0xf7fc4fff]) s
+5 511 M
+(+[    0.020001] PM: hibernation: Registered nosave memory: [mem 0xf7fd2000-0xf7ffafff]) s
+5 500 M
+(+[    0.020002] PM: hibernation: Registered nosave memory: [mem 0xf7ffb000-0xf7ffefff]) s
+5 489 M
+(+[    0.020003] PM: hibernation: Registered nosave memory: [mem 0xf8000000-0xffffffff]) s
+5 478 M
+(+[    0.020005] [mem 0xf8000000-0xffffffff] available for PCI devices) s
+5 467 M
+(+[    0.020006] Booting paravirtualized kernel on Hyper-V) s
+5 456 M
+(+[    0.020008] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_) s
+5 445 M
+(idle_ns: 1910969940391419 ns) s
+5 434 M
+(+[    0.020022] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:10 nr_cpu_ids:10 nr_node_ids:1) s
+5 423 M
+(+[    0.020661] percpu: Embedded 88 pages/cpu s237568 r8192 d114688 u524288) s
+5 412 M
+(+[    0.020667] pcpu-alloc: s237568 r8192 d114688 u524288 alloc=1*2097152) s
+5 401 M
+(+[    0.020670] pcpu-alloc: [0] 00 01 02 03 [0] 04 05 06 07 ) s
+5 390 M
+(+[    0.020675] pcpu-alloc: [0] 08 09 -- -- ) s
+5 379 M
+(+[    0.020691] Hyper-V: PV spinlocks enabled) s
+5 368 M
+(+[    0.020693] PV qspinlock hash table entries: 256 \(order: 0, 4096 bytes, linear\)) s
+5 357 M
+(+[    0.020696] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-6.14.0-rc3+ root=UUID=a635049) s
+5 346 M
+(a-e7f4-4ae1-a115-c89c17c95de1 ro earlyprintk=vga quiet splash crashkernel=2G-4G:320M,4G-32G) s
+5 335 M
+(:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M vt.handoff=7) s
+5 324 M
+(+[    0.020789] Unknown kernel command line parameters "splash BOOT_IMAGE=/boot/vmlinuz-6.1) s
+5 313 M
+(4.0-rc3+", will be passed to user space.) s
+5 302 M
+(+[    0.020800] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes) s
+5 291 M
+(+[    0.021431] Dentry cache hash table entries: 1048576 \(order: 11, 8388608 bytes, linear\)) s
+5 280 M
+(+[    0.021762] Inode-cache hash table entries: 524288 \(order: 10, 4194304 bytes, linear\)) s
+5 269 M
+(+[    0.021939] Fallback order for Node 0: 0 ) s
+5 258 M
+(+[    0.021942] Built 1 zonelists, mobility grouping on.  Total pages: 2096878) s
+5 247 M
+(+[    0.021943] Policy zone: Normal) s
+5 236 M
+(+[    0.021951] mem auto-init: stack:all\(zero\), heap alloc:on, heap free:off) s
+5 225 M
+(+[    0.021956] software IO TLB: area num 16.) s
+5 214 M
+(+[    0.048175] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=10, Nodes=1) s
+5 203 M
+(+[    0.048263] ftrace: allocating 55164 entries in 216 pages) s
+5 192 M
+(+[    0.076957] ftrace: allocated 216 pages with 4 groups) s
+5 181 M
+(+[    0.077754] Dynamic Preempt: voluntary) s
+5 170 M
+(+[    0.077833] rcu: Preemptible hierarchical RCU implementation.) s
+5 159 M
+(+[    0.077833] rcu:    RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=10.) s
+5 148 M
+(+[    0.077835]         Trampoline variant of Tasks RCU enabled.) s
+5 137 M
+(+[    0.077836]         Rude variant of Tasks RCU enabled.) s
+5 126 M
+(+[    0.077836]         Tracing variant of Tasks RCU enabled.) s
+5 115 M
+(+[    0.077837] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.) s
+5 104 M
+(+[    0.077838] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=10) s
+5 93 M
+(+[    0.077848] RCU Tasks: Setting shift to 4 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cp) s
+5 82 M
+(u_ids=10.) s
+5 71 M
+(+[    0.077851] RCU Tasks Rude: Setting shift to 4 and lim to 1 rcu_task_cb_adjust=1 rcu_ta) s
+5 60 M
+(sk_cpu_ids=10.) s
+5 49 M
+(+[    0.077852] RCU Tasks Trace: Setting shift to 4 and lim to 1 rcu_task_cb_adjust=1 rcu_t) s
+5 38 M
+(ask_cpu_ids=10.) s
+5 27 M
+(+[    0.083136] Using NULL legacy PIC) s
+5 16 M
+(+[    0.083137] NR_IRQS: 524544, nr_irqs: 504, preallocated irqs: 0) s
+5 5 M
+(+[    0.083187] rcu: srcu_init: Setting srcu_struct sizes based on contention.) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 4 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+[    0.083764] Console: colour dummy device 80x25) s
+5 731 M
+(+[    0.083767] printk: legacy console [tty0] enabled) s
+5 720 M
+(+[    0.083812] ACPI: Core revision 20240827) s
+5 709 M
+(+[    0.083940] Failed to register legacy timer interrupt) s
+5 698 M
+(+[    0.083941] APIC: Switch to symmetric I/O mode setup) s
+5 687 M
+(+[    0.086439] x2apic enabled) s
+5 676 M
+(+[    0.088160] APIC: Switched APIC routing to: physical x2apic) s
+5 665 M
+(+[    0.088165] Hyper-V: Host Build 10.0.26100.3194-3-0) s
+5 654 M
+(+[    0.088168] Hyper-V: enabling crash_kexec_post_notifiers) s
+5 643 M
+(+[    0.088221] Hyper-V: Using IPI hypercalls) s
+5 632 M
+(+[    0.088223] APIC: send_IPI\(\) replaced with hv_send_ipi\(\)) s
+5 621 M
+(+[    0.088242] APIC: send_IPI_mask\(\) replaced with hv_send_ipi_mask\(\)) s
+5 610 M
+(+[    0.088244] APIC: send_IPI_mask_allbutself\(\) replaced with hv_send_ipi_mask_allbutself\() s
+5 599 M
+(\)) s
+5 588 M
+(+[    0.088247] APIC: send_IPI_allbutself\(\) replaced with hv_send_ipi_allbutself\(\)) s
+5 577 M
+(+[    0.088250] APIC: send_IPI_all\(\) replaced with hv_send_ipi_all\(\)) s
+5 566 M
+(+[    0.088252] APIC: send_IPI_self\(\) replaced with hv_send_ipi_self\(\)) s
+5 555 M
+(+[    0.088350] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x26bef4a354e,) s
+5 544 M
+( max_idle_ns: 440795213564 ns) s
+5 533 M
+(+[    0.088357] Calibrating delay loop \(skipped\), value calculated using timer frequency.. ) s
+5 522 M
+(5375.99 BogoMIPS \(lpj=2687998\)) s
+5 511 M
+(+[    0.088437] x86/cpu: User Mode Instruction Prevention \(UMIP\) activated) s
+5 500 M
+(+[    0.088464] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0) s
+5 489 M
+(+[    0.088466] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0) s
+5 478 M
+(+[    0.088472] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer saniti) s
+5 467 M
+(zation) s
+5 456 M
+(+[    0.088476] Spectre V2 : Mitigation: Enhanced / Automatic IBRS) s
+5 445 M
+(+[    0.088477] Spectre V2 : Spectre v2 / SpectreRSB mitigation: Filling RSB on context swi) s
+5 434 M
+(tch) s
+5 423 M
+(+[    0.088478] Spectre V2 : Spectre v2 / PBRSB-eIBRS: Retire a single CALL on VMEXIT) s
+5 412 M
+(+[    0.088479] RETBleed: Mitigation: Enhanced IBRS) s
+5 401 M
+(+[    0.088481] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Ba) s
+5 390 M
+(rrier) s
+5 379 M
+(+[    0.088483] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via) s
+5 368 M
+( prctl) s
+5 357 M
+(+[    0.088484] Register File Data Sampling: Mitigation: Clear Register File) s
+5 346 M
+(+[    0.088500] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers') s
+5 335 M
+(+[    0.088502] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers') s
+5 324 M
+(+[    0.088503] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers') s
+5 313 M
+(+[    0.088504] x86/fpu: Supporting XSAVE feature 0x800: 'Control-flow User registers') s
+5 302 M
+(+[    0.088505] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256) s
+5 291 M
+(+[    0.088507] x86/fpu: xstate_offset[11]:  832, xstate_sizes[11]:   16) s
+5 280 M
+(+[    0.088508] x86/fpu: Enabled xstate features 0x807, context size is 848 bytes, using 'c) s
+5 269 M
+(ompacted' format.) s
+5 258 M
+(+[    0.089354] Freeing SMP alternatives memory: 44K) s
+5 247 M
+(+[    0.089354] pid_max: default: 32768 minimum: 301) s
+5 236 M
+(+[    0.089354] LSM: initializing lsm=lockdown,capability,landlock,yama,apparmor,ima,evm) s
+5 225 M
+(+[    0.089354] landlock: Up and running.) s
+5 214 M
+(+[    0.089354] Yama: becoming mindful.) s
+5 203 M
+(+[    0.089354] AppArmor: AppArmor initialized) s
+5 192 M
+(+[    0.089354] Mount-cache hash table entries: 16384 \(order: 5, 131072 bytes, linear\)) s
+5 181 M
+(+[    0.089354] Mountpoint-cache hash table entries: 16384 \(order: 5, 131072 bytes, linear\)) s
+5 170 M
+(+[    0.089354] smpboot: CPU0: 12th Gen Intel\(R\) Core\(TM\) i7-12700H \(family: 0x6, model: 0x) s
+5 159 M
+(9a, stepping: 0x3\)) s
+5 148 M
+(+[    0.089354] Performance Events: unsupported p6 CPU model 154 no PMU driver, software ev) s
+5 137 M
+(ents only.) s
+5 126 M
+(+[    0.089354] signal: max sigframe size: 1776) s
+5 115 M
+(+[    0.089354] rcu: Hierarchical SRCU implementation.) s
+5 104 M
+(+[    0.089354] rcu:    Max phase no-delay instances is 400.) s
+5 93 M
+(+[    0.089354] Timer migration: 2 hierarchy levels; 8 children per group; 2 crossnode leve) s
+5 82 M
+(l) s
+5 71 M
+(+[    0.089354] NMI watchdog: Perf NMI watchdog permanently disabled) s
+5 60 M
+(+[    0.089354] smp: Bringing up secondary CPUs ...) s
+5 49 M
+(+[    0.089354] smpboot: x86: Booting SMP configuration:) s
+5 38 M
+(+[    0.089354] .... node  #0, CPUs:        #2  #4  #6  #8  #1  #3  #5  #7  #9) s
+5 27 M
+(+[    0.100697] smp: Brought up 1 node, 10 CPUs) s
+5 16 M
+(+[    0.100702] smpboot: Total of 10 processors activated \(53759.96 BogoMIPS\)) s
+5 5 M
+(+[    0.102463] Memory: 7561540K/8387512K available \(20809K kernel code, 4537K rwdata, 8156) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 5 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(K rodata, 4912K init, 4704K bss, 812136K reserved, 0K cma-reserved\)) s
+5 731 M
+(+[    0.102702] devtmpfs: initialized) s
+5 720 M
+(+[    0.102702] x86/mm: Memory block size: 128MB) s
+5 709 M
+(+[    0.104420] ACPI: PM: Registering ACPI NVS region [mem 0xf7ffb000-0xf7ffefff] \(16384 by) s
+5 698 M
+(tes\)) s
+5 687 M
+(+[    0.104473] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns:) s
+5 676 M
+( 1911260446275000 ns) s
+5 665 M
+(+[    0.104497] futex hash table entries: 4096 \(order: 6, 262144 bytes, linear\)) s
+5 654 M
+(+[    0.104574] pinctrl core: initialized pinctrl subsystem) s
+5 643 M
+(+[    0.104965] PM: RTC time: 19:15:57, date: 2025-02-23) s
+5 632 M
+(+[    0.106193] NET: Registered PF_NETLINK/PF_ROUTE protocol family) s
+5 621 M
+(+[    0.106401] DMA: preallocated 1024 KiB GFP_KERNEL pool for atomic allocations) s
+5 610 M
+(+[    0.106512] DMA: preallocated 1024 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations) s
+5 599 M
+(+[    0.106603] DMA: preallocated 1024 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations) s
+5 588 M
+(+[    0.106616] audit: initializing netlink subsys \(disabled\)) s
+5 577 M
+(+[    0.106701] audit: type=2000 audit\(1740338157.018:1\): state=initialized audit_enabled=0) s
+5 566 M
+( res=1) s
+5 555 M
+(+[    0.106701] thermal_sys: Registered thermal governor 'fair_share') s
+5 544 M
+(+[    0.106701] thermal_sys: Registered thermal governor 'bang_bang') s
+5 533 M
+(+[    0.106701] thermal_sys: Registered thermal governor 'step_wise') s
+5 522 M
+(+[    0.106701] thermal_sys: Registered thermal governor 'user_space') s
+5 511 M
+(+[    0.106701] thermal_sys: Registered thermal governor 'power_allocator') s
+5 500 M
+(+[    0.106701] EISA bus registered) s
+5 489 M
+(+[    0.106701] cpuidle: using governor ladder) s
+5 478 M
+(+[    0.106701] cpuidle: using governor menu) s
+5 467 M
+(+[    0.107840] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5) s
+5 456 M
+(+[    0.107936] e820: reserve RAM buffer [mem 0xf6c2c000-0xf7ffffff]) s
+5 445 M
+(+[    0.107938] e820: reserve RAM buffer [mem 0xf7f41000-0xf7ffffff]) s
+5 434 M
+(+[    0.107940] e820: reserve RAM buffer [mem 0xf7fd2000-0xf7ffffff]) s
+5 423 M
+(+[    0.108389] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if ) s
+5 412 M
+(possible.) s
+5 401 M
+(+[    0.118804] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages) s
+5 390 M
+(+[    0.118806] HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page) s
+5 379 M
+(+[    0.118809] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages) s
+5 368 M
+(+[    0.118810] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page) s
+5 357 M
+(+[    0.120486] ACPI: Added _OSI\(Module Device\)) s
+5 346 M
+(+[    0.120489] ACPI: Added _OSI\(Processor Device\)) s
+5 335 M
+(+[    0.120490] ACPI: Added _OSI\(3.0 _SCP Extensions\)) s
+5 324 M
+(+[    0.120491] ACPI: Added _OSI\(Processor Aggregator Device\)) s
+5 313 M
+(+[    0.128973] ACPI: 1 ACPI AML tables successfully acquired and loaded) s
+5 302 M
+(+[    0.146560] ACPI: Interpreter enabled) s
+5 291 M
+(+[    0.146572] ACPI: PM: \(supports S0 S5\)) s
+5 280 M
+(+[    0.146573] ACPI: Using IOAPIC for interrupt routing) s
+5 269 M
+(+[    0.146627] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and) s
+5 258 M
+( report a bug) s
+5 247 M
+(+[    0.146628] PCI: Ignoring E820 reservations for host bridge windows) s
+5 236 M
+(+[    0.146807] ACPI: Enabled 2 GPEs in block 00 to 0F) s
+5 225 M
+(+[    0.148958] iommu: Default domain type: Translated) s
+5 214 M
+(+[    0.148958] iommu: DMA domain TLB invalidation policy: lazy mode) s
+5 203 M
+(+[    0.148958] SCSI subsystem initialized) s
+5 192 M
+(+[    0.149401] libata version 3.00 loaded.) s
+5 181 M
+(+[    0.149428] ACPI: bus type USB registered) s
+5 170 M
+(+[    0.149439] usbcore: registered new interface driver usbfs) s
+5 159 M
+(+[    0.149443] usbcore: registered new interface driver hub) s
+5 148 M
+(+[    0.149459] usbcore: registered new device driver usb) s
+5 137 M
+(+[    0.149479] pps_core: LinuxPPS API ver. 1 registered) s
+5 126 M
+(+[    0.149480] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giome) s
+5 115 M
+(tti@linux.it>) s
+5 104 M
+(+[    0.149482] PTP clock support registered) s
+5 93 M
+(+[    0.149516] EDAC MC: Ver: 3.0.0) s
+5 82 M
+(+[    0.150489] efivars: Registered efivars operations) s
+5 71 M
+(+[    0.151702] NetLabel: Initializing) s
+5 60 M
+(+[    0.151705] NetLabel:  domain hash size = 128) s
+5 49 M
+(+[    0.151706] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO) s
+5 38 M
+(+[    0.151726] NetLabel:  unlabeled traffic allowed by default) s
+5 27 M
+(+[    0.151754] mctp: management component transport protocol core) s
+5 16 M
+(+[    0.151754] NET: Registered PF_MCTP protocol family) s
+5 5 M
+(+[    0.151754] PCI: Using ACPI for IRQ routing) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 6 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+[    0.151754] PCI: System does not support PCI) s
+5 731 M
+(+[    0.151754] vgaarb: loaded) s
+5 720 M
+(+[    0.153217] clocksource: Switched to clocksource tsc-early) s
+5 709 M
+(+[    0.153217] VFS: Disk quotas dquot_6.6.0) s
+5 698 M
+(+[    0.153217] VFS: Dquot-cache hash table entries: 512 \(order 0, 4096 bytes\)) s
+5 687 M
+(+[    0.153260] AppArmor: AppArmor Filesystem Enabled) s
+5 676 M
+(+[    0.153260] pnp: PnP ACPI init) s
+5 665 M
+(+[    0.153342] pnp: PnP ACPI: found 1 devices) s
+5 654 M
+(+[    0.167763] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 208) s
+5 643 M
+(5701024 ns) s
+5 632 M
+(+[    0.167822] NET: Registered PF_INET protocol family) s
+5 621 M
+(+[    0.167936] IP idents hash table entries: 131072 \(order: 8, 1048576 bytes, linear\)) s
+5 610 M
+(+[    0.169239] tcp_listen_portaddr_hash hash table entries: 4096 \(order: 4, 65536 bytes, l) s
+5 599 M
+(inear\)) s
+5 588 M
+(+[    0.169265] Table-perturb hash table entries: 65536 \(order: 6, 262144 bytes, linear\)) s
+5 577 M
+(+[    0.169314] TCP established hash table entries: 65536 \(order: 7, 524288 bytes, linear\)) s
+5 566 M
+(+[    0.169545] TCP bind hash table entries: 65536 \(order: 9, 2097152 bytes, linear\)) s
+5 555 M
+(+[    0.169793] TCP: Hash tables configured \(established 65536 bind 65536\)) s
+5 544 M
+(+[    0.169881] MPTCP token hash table entries: 8192 \(order: 5, 196608 bytes, linear\)) s
+5 533 M
+(+[    0.169942] UDP hash table entries: 4096 \(order: 6, 262144 bytes, linear\)) s
+5 522 M
+(+[    0.169993] UDP-Lite hash table entries: 4096 \(order: 6, 262144 bytes, linear\)) s
+5 511 M
+(+[    0.170065] NET: Registered PF_UNIX/PF_LOCAL protocol family) s
+5 500 M
+(+[    0.170073] NET: Registered PF_XDP protocol family) s
+5 489 M
+(+[    0.170076] PCI: CLS 0 bytes, default 64) s
+5 478 M
+(+[    0.170099] PCI-DMA: Using software bounce buffering for IO \(SWIOTLB\)) s
+5 467 M
+(+[    0.170100] software IO TLB: mapped [mem 0x00000000f2bfd000-0x00000000f6bfd000] \(64MB\)) s
+5 456 M
+(+[    0.170139] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x26bef4a354e, max_i) s
+5 445 M
+(dle_ns: 440795213564 ns) s
+5 434 M
+(+[    0.170155] Unpacking initramfs...) s
+5 423 M
+(+[    0.172353] clocksource: Switched to clocksource tsc) s
+5 412 M
+(+[    0.177181] Initialise system trusted keyrings) s
+5 401 M
+(+[    0.177190] Key type blacklist registered) s
+5 390 M
+(+[    0.177490] workingset: timestamp_bits=36 max_order=21 bucket_order=0) s
+5 379 M
+(+[    0.177501] zbud: loaded) s
+5 368 M
+(+[    0.177893] squashfs: version 4.0 \(2009/01/31\) Phillip Lougher) s
+5 357 M
+(+[    0.178298] fuse: init \(API version 7.42\)) s
+5 346 M
+(+[    0.179387] integrity: Platform Keyring initialized) s
+5 335 M
+(+[    0.179391] integrity: Machine keyring initialized) s
+5 324 M
+(+[    0.188236] Key type asymmetric registered) s
+5 313 M
+(+[    0.188238] Asymmetric key parser 'x509' registered) s
+5 302 M
+(+[    0.188254] Block layer SCSI generic \(bsg\) driver version 0.4 loaded \(major 243\)) s
+5 291 M
+(+[    0.188525] io scheduler mq-deadline registered) s
+5 280 M
+(+[    0.191120] ledtrig-cpu: registered to indicate activity on CPUs) s
+5 269 M
+(+[    0.191149] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4) s
+5 258 M
+(+[    0.191414] ACPI: AC: AC Adapter [AC1] \(off-line\)) s
+5 247 M
+(+[    0.193860] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled) s
+5 236 M
+(+[    0.194110] ACPI: battery: Slot [BAT1] \(battery present\)) s
+5 225 M
+(+[    0.200090] Linux agpgart interface v0.103) s
+5 214 M
+(+[    0.200146] ACPI: bus type drm_connector registered) s
+5 203 M
+(+[    0.205858] loop: module loaded) s
+5 192 M
+(+[    0.206453] tun: Universal TUN/TAP device driver, 1.6) s
+5 181 M
+(+[    0.206696] PPP generic driver version 2.4.2) s
+5 170 M
+(+[    0.206961] i8042: PNP: No PS/2 controller found.) s
+5 159 M
+(+[    0.207245] mousedev: PS/2 mouse device common for all mice) s
+5 148 M
+(+[    0.209693] rtc_cmos 00:00: registered as rtc0) s
+5 137 M
+(+[    0.210150] rtc_cmos 00:00: setting system clock to 2025-02-23T19:15:57 UTC \(1740338157) s
+5 126 M
+(\)) s
+5 115 M
+(+[    0.210298] rtc_cmos 00:00: alarms up to one month, 114 bytes nvram) s
+5 104 M
+(+[    0.210308] i2c_dev: i2c /dev entries driver) s
+5 93 M
+(+[    0.210320] device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA m) s
+5 82 M
+(easurements will not be recorded in the IMA log.) s
+5 71 M
+(+[    0.210335] device-mapper: uevent: version 1.0.3) s
+5 60 M
+(+[    0.210548] device-mapper: ioctl: 4.49.0-ioctl \(2025-01-17\) initialised: dm-devel@lists) s
+5 49 M
+(.linux.dev) s
+5 38 M
+(+[    0.210576] platform eisa.0: Probing EISA bus 0) s
+5 27 M
+(+[    0.210599] platform eisa.0: EISA: Detected 0 cards) s
+5 16 M
+(+[    0.210602] intel_pstate: CPU model not supported) s
+5 5 M
+(+[    0.210911] [drm] Initialized simpledrm 1.0.0 for simple-framebuffer.0 on minor 0) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 7 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+[    0.211842] fbcon: Deferring console take-over) s
+5 731 M
+(+[    0.211844] simple-framebuffer simple-framebuffer.0: [drm] fb0: simpledrmdrmfb frame bu) s
+5 720 M
+(ffer device) s
+5 709 M
+(+[    0.212030] drop_monitor: Initializing network drop monitor service) s
+5 698 M
+(+[    0.212130] NET: Registered PF_INET6 protocol family) s
+5 687 M
+(+[    0.246708] Freeing initrd memory: 28592K) s
+5 676 M
+(+[    0.253025] Segment Routing with IPv6) s
+5 665 M
+(+[    0.253039] In-situ OAM \(IOAM\) with IPv6) s
+5 654 M
+(+[    0.253070] NET: Registered PF_PACKET protocol family) s
+5 643 M
+(+[    0.253203] Key type dns_resolver registered) s
+5 632 M
+(+[    0.254032] IPI shorthand broadcast: enabled) s
+5 621 M
+(+[    0.255502] sched_clock: Marking stable \(250025254, 4655528\)->\(288027340, -33346558\)) s
+5 610 M
+(+[    0.256110] registered taskstats version 1) s
+5 599 M
+(+[    0.257103] Loading compiled-in X.509 certificates) s
+5 588 M
+(+[    0.257850] Loaded X.509 cert 'Build time autogenerated kernel key: 5b312c09f577351a4f9) s
+5 577 M
+(f5f07c0dac6ee152ee830') s
+5 566 M
+(+[    0.261066] Demotion targets for Node 0: null) s
+5 555 M
+(+[    0.261221] Key type .fscrypt registered) s
+5 544 M
+(+[    0.261223] Key type fscrypt-provisioning registered) s
+5 533 M
+(+[    0.275864] Key type encrypted registered) s
+5 522 M
+(+[    0.275869] AppArmor: AppArmor sha256 policy hashing enabled) s
+5 511 M
+(+[    0.276433] integrity: Loading X.509 certificate: UEFI:db) s
+5 500 M
+(+[    0.276461] integrity: Loaded X.509 cert 'Microsoft Corporation UEFI CA 2011: 13adbf430) s
+5 489 M
+(9bd82709c8cd54f316ed522988a1bd4') s
+5 478 M
+(+[    0.276462] integrity: Loading X.509 certificate: UEFI:db) s
+5 467 M
+(+[    0.276477] integrity: Loaded X.509 cert 'Microsoft UEFI CA 2023: 81aa6b3244c935bce0d66) s
+5 456 M
+(28af39827421e32497d') s
+5 445 M
+(+[    0.276478] integrity: Loading X.509 certificate: UEFI:db) s
+5 434 M
+(+[    0.276492] integrity: Loaded X.509 cert 'Microsoft Corporation: Azure Services Linux K) s
+5 423 M
+(mod PCA: 697cc4f41a2209a7abd0604c1f196f4d8c5735d9') s
+5 412 M
+(+[    0.277731] ima: No TPM chip found, activating TPM-bypass!) s
+5 401 M
+(+[    0.277733] Loading compiled-in module X.509 certificates) s
+5 390 M
+(+[    0.278166] Loaded X.509 cert 'Build time autogenerated kernel key: 5b312c09f577351a4f9) s
+5 379 M
+(f5f07c0dac6ee152ee830') s
+5 368 M
+(+[    0.278168] ima: Allocated hash algorithm: sha256) s
+5 357 M
+(+[    0.278177] ima: No architecture policies found) s
+5 346 M
+(+[    0.278192] evm: Initialising EVM extended attributes:) s
+5 335 M
+(+[    0.278193] evm: security.selinux) s
+5 324 M
+(+[    0.278194] evm: security.SMACK64) s
+5 313 M
+(+[    0.278195] evm: security.SMACK64EXEC) s
+5 302 M
+(+[    0.278195] evm: security.SMACK64TRANSMUTE) s
+5 291 M
+(+[    0.278196] evm: security.SMACK64MMAP) s
+5 280 M
+(+[    0.278197] evm: security.apparmor) s
+5 269 M
+(+[    0.278197] evm: security.ima) s
+5 258 M
+(+[    0.278198] evm: security.capability) s
+5 247 M
+(+[    0.278199] evm: HMAC attrs: 0x1) s
+5 236 M
+(+[    0.278518] PM:   Magic number: 13:439:294) s
+5 225 M
+(+[    0.278528] misc hpet: hash matches) s
+5 214 M
+(+[    0.278547] tty tty27: hash matches) s
+5 203 M
+(+[    0.278891] RAS: Correctable Errors collector initialized.) s
+5 192 M
+(+[    0.278944] clk: Disabling unused clocks) s
+5 181 M
+(+[    0.287741] Freeing unused decrypted memory: 2028K) s
+5 170 M
+(+[    0.288755] Freeing unused kernel image \(initmem\) memory: 4912K) s
+5 159 M
+(+[    0.288771] Write protecting the kernel read-only data: 30720k) s
+5 148 M
+(+[    0.289940] Freeing unused kernel image \(text/rodata gap\) memory: 1716K) s
+5 137 M
+(+[    0.290314] Freeing unused kernel image \(rodata/data gap\) memory: 36K) s
+5 126 M
+(+[    0.302090] x86/mm: Checked W+X mappings: passed, no W+X pages found.) s
+5 115 M
+(+[    0.302166] Run /init as init process) s
+5 104 M
+(+[    0.302169]   with arguments:) s
+5 93 M
+(+[    0.302170]     /init) s
+5 82 M
+(+[    0.302171]     splash) s
+5 71 M
+(+[    0.302172]   with environment:) s
+5 60 M
+(+[    0.302173]     HOME=/) s
+5 49 M
+(+[    0.302174]     TERM=linux) s
+5 38 M
+(+[    0.302174]     BOOT_IMAGE=/boot/vmlinuz-6.14.0-rc3+) s
+5 27 M
+(+[    0.409968] hv_vmbus: Vmbus version:5.3) s
+5 16 M
+(+[    0.414767] hv_vmbus: registering driver hyperv_keyboard) s
+5 5 M
+(+[    0.416148] input: AT Translated Set 2 keyboard as /devices/LNXSYSTM:00/LNXSYBUS:00/ACP) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 8 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(I0004:00/VMBUS:00/d34b2567-b9b6-42b9-8778-0a4ec0b955bf/serio0/input/input0) s
+5 731 M
+(+[    0.420666] hv_utils: Registering HyperV Utility Driver) s
+5 720 M
+(+[    0.420669] hv_vmbus: registering driver hv_utils) s
+5 709 M
+(+[    0.421828] hv_utils: Heartbeat IC version 3.0) s
+5 698 M
+(+[    0.421837] hv_utils: Shutdown IC version 3.2) s
+5 687 M
+(+[    0.422461] hv_utils: TimeSync IC version 4.0) s
+5 676 M
+(+[    0.422469] hv_utils: VSS IC version 5.0) s
+5 665 M
+(+[    0.426882] hv_vmbus: registering driver hv_storvsc) s
+5 654 M
+(+[    0.428363] hid: raw HID events driver \(C\) Jiri Kosina) s
+5 643 M
+(+[    0.428710] scsi host0: storvsc_host_t) s
+5 632 M
+(+[    0.430584] scsi 0:0:0:0: Direct-Access     Msft     Virtual Disk     1.0  PQ: 0 ANSI: ) s
+5 621 M
+(5) s
+5 610 M
+(+[    0.433232] scsi 0:0:0:1: CD-ROM            Msft     Virtual DVD-ROM  1.0  PQ: 0 ANSI: ) s
+5 599 M
+(0) s
+5 588 M
+(+[    0.436769] hv_vmbus: registering driver hv_netvsc) s
+5 577 M
+(+[    0.437363] sd 0:0:0:0: Attached scsi generic sg0 type 0) s
+5 566 M
+(+[    0.437457] sd 0:0:0:0: [sda] 268435456 512-byte logical blocks: \(137 GB/128 GiB\)) s
+5 555 M
+(+[    0.437462] sd 0:0:0:0: [sda] 4096-byte physical blocks) s
+5 544 M
+(+[    0.437530] sd 0:0:0:0: [sda] Write Protect is off) s
+5 533 M
+(+[    0.437534] sd 0:0:0:0: [sda] Mode Sense: 0f 00 00 00) s
+5 522 M
+(+[    0.437735] sr 0:0:0:1: [sr0] scsi-1 drive) s
+5 511 M
+(+[    0.437738] cdrom: Uniform CD-ROM driver Revision: 3.20) s
+5 500 M
+(+[    0.437762] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't suppor) s
+5 489 M
+(t DPO or FUA) s
+5 478 M
+(+[    0.437826] hv_storvsc 1d495eda-d418-4fba-b6e8-189db4d777f3: tag#0 cmd 0x5a status: scs) s
+5 467 M
+(i 0x2 srb 0x86 hv 0xc0000001) s
+5 456 M
+(+[    0.438174] sr 0:0:0:1: Attached scsi CD-ROM sr0) s
+5 445 M
+(+[    0.438289] sr 0:0:0:1: Attached scsi generic sg1 type 5) s
+5 434 M
+(+[    0.438825] hv_storvsc 1d495eda-d418-4fba-b6e8-189db4d777f3: tag#7 cmd 0x5a status: scs) s
+5 423 M
+(i 0x2 srb 0x86 hv 0xc0000001) s
+5 412 M
+(+[    0.494741]  sda: sda1 sda2) s
+5 401 M
+(+[    0.495469] sd 0:0:0:0: [sda] Attached SCSI disk) s
+5 390 M
+(+[    0.505453] hv_vmbus: registering driver hid_hyperv) s
+5 379 M
+(+[    0.507793] input: Microsoft Vmbus HID-compliant Mouse as /devices/0006:045E:0621.0001/) s
+5 368 M
+(input/input1) s
+5 357 M
+(+[    0.508211] hid-hyperv 0006:045E:0621.0001: input: VIRTUAL HID v0.01 Mouse [Microsoft V) s
+5 346 M
+(mbus HID-compliant Mouse] on ) s
+5 335 M
+(+[    2.882686] EXT4-fs \(sda2\): orphan cleanup on readonly fs) s
+5 324 M
+(+[    2.883094] EXT4-fs \(sda2\): mounted filesystem a635049a-e7f4-4ae1-a115-c89c17c95de1 ro ) s
+5 313 M
+(with ordered data mode. Quota mode: none.) s
+5 302 M
+(+[    3.152779] systemd[1]: Inserted module 'autofs4') s
+5 291 M
+(+[    3.259019] systemd[1]: systemd 256.5-2ubuntu3.1 running in system mode \(+PAM +AUDIT +S) s
+5 280 M
+(ELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS ) s
+5 269 M
+(+FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUA) s
+5 258 M
+(LITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK -XKBCOMMON +UTMP +S) s
+5 247 M
+(YSVINIT +LIBARCHIVE\)) s
+5 236 M
+(+[    3.259024] systemd[1]: Detected virtualization microsoft.) s
+5 225 M
+(+[    3.259035] systemd[1]: Detected architecture x86-64.) s
+5 214 M
+(+[    3.262800] systemd[1]: Hostname set to <gabriel-shahrouzi-Virtual-Machine>.) s
+5 203 M
+(+[    3.341020] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LS) s
+5 192 M
+(M not supported.) s
+5 181 M
+(+[    3.395154] NET: Registered PF_VSOCK protocol family) s
+5 170 M
+(+[    3.412810] Guest personality initialized and is inactive) s
+5 159 M
+(+[    3.412995] VMCI host device registered \(name=vmci, major=10, minor=119\)) s
+5 148 M
+(+[    3.412998] Initialized host personality) s
+5 137 M
+(+[    3.430423] hv_vmbus: registering driver hv_sock) s
+5 126 M
+(+[    3.824148] systemd[1]: Queued start job for default target graphical.target.) s
+5 115 M
+(+[    3.858123] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.) s
+5 104 M
+(+[    3.858765] systemd[1]: Created slice system-postfix.slice - Slice /system/postfix.) s
+5 93 M
+(+[    3.859270] systemd[1]: Created slice system-systemd\\x2dfsck.slice - Slice /system/syst) s
+5 82 M
+(emd-fsck.) s
+5 71 M
+(+[    3.859486] systemd[1]: Created slice user.slice - User and Session Slice.) s
+5 60 M
+(+[    3.859572] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Reque) s
+5 49 M
+(sts to Wall Directory Watch.) s
+5 38 M
+(+[    3.859983] systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary ) s
+5 27 M
+(Executable File Formats File System Automount Point.) s
+5 16 M
+(+[    3.860020] systemd[1]: Expecting device dev-disk-by\\x2duuid-2F06\\x2d8E4B.device - /dev) s
+5 5 M
+(/disk/by-uuid/2F06-8E4B...) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 9 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+[    3.860067] systemd[1]: Reached target integritysetup.target - Local Integrity Protecte) s
+5 731 M
+(d Volumes.) s
+5 720 M
+(+[    3.860125] systemd[1]: Reached target remote-fs.target - Remote File Systems.) s
+5 709 M
+(+[    3.860147] systemd[1]: Reached target slices.target - Slice Units.) s
+5 698 M
+(+[    3.860165] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.) s
+5 687 M
+(+[    3.860209] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volu) s
+5 676 M
+(mes.) s
+5 665 M
+(+[    3.860399] systemd[1]: Listening on syslog.socket - Syslog Socket.) s
+5 654 M
+(+[    3.862269] systemd[1]: Listening on systemd-creds.socket - Credential Encryption/Decry) s
+5 643 M
+(ption.) s
+5 632 M
+(+[    3.862341] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication) s
+5 621 M
+( Socket.) s
+5 610 M
+(+[    3.862407] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Nam) s
+5 599 M
+(ed Pipe.) s
+5 588 M
+(+[    3.862467] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket \() s
+5 577 M
+(/dev/log\).) s
+5 566 M
+(+[    3.862606] systemd[1]: Listening on systemd-journald.socket - Journal Sockets.) s
+5 555 M
+(+[    3.862802] systemd[1]: Listening on systemd-oomd.socket - Userspace Out-Of-Memory \(OOM) s
+5 544 M
+(\) Killer Socket.) s
+5 533 M
+(+[    3.862835] systemd[1]: systemd-pcrextend.socket - TPM PCR Measurements was skipped bec) s
+5 522 M
+(ause of an unmet condition check \(ConditionSecurity=measured-uki\).) s
+5 511 M
+(+[    3.862852] systemd[1]: systemd-pcrlock.socket - Make TPM PCR Policy was skipped becaus) s
+5 500 M
+(e of an unmet condition check \(ConditionSecurity=measured-uki\).) s
+5 489 M
+(+[    3.862920] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket) s
+5 478 M
+(.) s
+5 467 M
+(+[    3.862970] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.) s
+5 456 M
+(+[    3.864752] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...) s
+5 445 M
+(+[    3.865651] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...) s
+5 434 M
+(+[    3.866623] systemd[1]: Mounting run-lock.mount - Legacy Locks Directory /run/lock...) s
+5 423 M
+(+[    3.868100] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...) s
+5 412 M
+(+[    3.869374] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...) s
+5 401 M
+(+[    3.889520] systemd[1]: Starting systemd-journald.service - Journal Service...) s
+5 390 M
+(+[    3.895593] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layo) s
+5 379 M
+(ut...) s
+5 368 M
+(+[    3.898322] systemd[1]: Starting kmod-static-nodes.service - Create List of Static Devi) s
+5 357 M
+(ce Nodes...) s
+5 346 M
+(+[    3.902125] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configf) s
+5 335 M
+(s...) s
+5 324 M
+(+[    3.904590] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...) s
+5 313 M
+(+[    3.905691] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_p) s
+5 302 M
+(store...) s
+5 291 M
+(+[    3.907245] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...) s
+5 280 M
+(+[    3.907434] systemd[1]: systemd-fsck-root.service - File System Check on Root Device wa) s
+5 269 M
+(s skipped because of an unmet condition check \(ConditionPathExists=!/run/initramfs/fsck-roo) s
+5 258 M
+(t\).) s
+5 247 M
+(+[    3.907470] systemd[1]: systemd-hibernate-clear.service - Clear Stale Hibernate Storage) s
+5 236 M
+( Info was skipped because of an unmet condition check \(ConditionPathExists=/sys/firmware/ef) s
+5 225 M
+(i/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67\).) s
+5 214 M
+(+[    3.910551] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...) s
+5 203 M
+(+[    3.910576] systemd[1]: systemd-pcrmachine.service - TPM PCR Machine ID Measurement was) s
+5 192 M
+( skipped because of an unmet condition check \(ConditionSecurity=measured-uki\).) s
+5 181 M
+(+[    3.911417] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel F) s
+5 170 M
+(ile Systems...) s
+5 159 M
+(+[    3.911470] systemd[1]: systemd-tpm2-setup-early.service - Early TPM SRK Setup was skip) s
+5 148 M
+(ped because of an unmet condition check \(ConditionSecurity=measured-uki\).) s
+5 137 M
+(+[    3.912263] systemd[1]: Starting systemd-udev-load-credentials.service - Load udev Rule) s
+5 126 M
+(s from Credentials...) s
+5 115 M
+(+[    3.913103] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devic) s
+5 104 M
+(es...) s
+5 93 M
+(+[    3.918314] systemd[1]: Mounted dev-hugepages.mount - Huge Pages File System.) s
+5 82 M
+(+[    3.918414] systemd[1]: Mounted dev-mqueue.mount - POSIX Message Queue File System.) s
+5 71 M
+(+[    3.918491] systemd[1]: Mounted run-lock.mount - Legacy Locks Directory /run/lock.) s
+5 60 M
+(+[    3.918566] systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.) s
+5 49 M
+(+[    3.918638] systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.) s
+5 38 M
+(+[    3.918857] systemd[1]: Finished kmod-static-nodes.service - Create List of Static Devi) s
+5 27 M
+(ce Nodes.) s
+5 16 M
+(+[    3.919104] systemd[1]: modprobe@configfs.service: Deactivated successfully.) s
+5 5 M
+(+[    3.919225] systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configf) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 10 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(s.) s
+5 731 M
+(+[    3.919388] systemd[1]: modprobe@drm.service: Deactivated successfully.) s
+5 720 M
+(+[    3.919495] systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.) s
+5 709 M
+(+[    3.919716] systemd[1]: modprobe@fuse.service: Deactivated successfully.) s
+5 698 M
+(+[    3.919826] systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.) s
+5 687 M
+(+[    3.920604] systemd[1]: Mounting sys-fs-fuse-connections.mount - FUSE Control File Syst) s
+5 676 M
+(em...) s
+5 665 M
+(+[    3.921244] systemd[1]: Mounting sys-kernel-config.mount - Kernel Configuration File Sy) s
+5 654 M
+(stem...) s
+5 643 M
+(+[    3.922529] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Stat) s
+5 632 M
+(ic Device Nodes in /dev gracefully...) s
+5 621 M
+(+[    3.925764] pstore: Using crash dump compression: deflate) s
+5 610 M
+(+[    3.927013] systemd-journald[372]: Collecting audit messages is disabled.) s
+5 599 M
+(+[    3.934793] systemd[1]: Mounted sys-fs-fuse-connections.mount - FUSE Control File Syste) s
+5 588 M
+(m.) s
+5 577 M
+(+[    3.938107] systemd[1]: Started systemd-journald.service - Journal Service.) s
+5 566 M
+(+[    3.946536] EXT4-fs \(sda2\): re-mounted a635049a-e7f4-4ae1-a115-c89c17c95de1 r/w. Quota ) s
+5 555 M
+(mode: none.) s
+5 544 M
+(+[    3.960624] lp: driver loaded but no devices found) s
+5 533 M
+(+[    3.968061] systemd-journald[372]: Received client request to flush runtime journal.) s
+5 522 M
+(+[    3.971381] Adding 4194300k swap on /swap.img.  Priority:-2 extents:3 across:4456444k ) s
+5 511 M
+(+[    3.972875] ppdev: user-space parallel port driver) s
+5 500 M
+(+[    3.973621] systemd-journald[372]: File /var/log/journal/91269f289b2c44db97f1de830c3ff9) s
+5 489 M
+(45/system.journal corrupted or uncleanly shut down, renaming and replacing.) s
+5 478 M
+(+[    3.978502] pstore: Registered efi_pstore as persistent store backend) s
+5 467 M
+(+[    4.383542] hv_vmbus: registering driver hv_balloon) s
+5 456 M
+(+[    4.384632] hv_balloon: Using Dynamic Memory protocol version 2.0) s
+5 445 M
+(+[    4.393649] hv_vmbus: registering driver hyperv_fb) s
+5 434 M
+(+[    4.403940] hyperv_fb: Synthvid Version major 3, minor 5) s
+5 423 M
+(+[    4.404040] hyperv_fb: Screen resolution: 1024x768, Color depth: 32, Frame buffer size:) s
+5 412 M
+( 8388608) s
+5 401 M
+(+[    4.428676] workqueue: do_free_init hogged CPU for >10000us 4 times, consider switching) s
+5 390 M
+( to WQ_UNBOUND) s
+5 379 M
+(+[    4.439566] RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl t) s
+5 368 M
+(imer) s
+5 357 M
+(+[    4.449964] cryptd: max_cpu_qlen set to 1000) s
+5 346 M
+(+[    4.450098] fbcon: Deferring console take-over) s
+5 335 M
+(+[    4.464984] hv_vmbus: registering driver hyperv_drm) s
+5 324 M
+(+[    4.465433] AES CTR mode by8 optimization enabled) s
+5 313 M
+(+[    4.594524] intel_rapl_msr: PL4 support detected.) s
+5 302 M
+(+[    4.971217] loop0: detected capacity change from 0 to 152056) s
+5 291 M
+(+[    4.971620] loop1: detected capacity change from 0 to 8) s
+5 280 M
+(+[    4.974440] loop2: detected capacity change from 0 to 151328) s
+5 269 M
+(+[    4.977203] loop3: detected capacity change from 0 to 23992) s
+5 258 M
+(+[    4.983553] loop4: detected capacity change from 0 to 24056) s
+5 247 M
+(+[    4.985022] loop5: detected capacity change from 0 to 557016) s
+5 236 M
+(+[    4.987440] loop6: detected capacity change from 0 to 528256) s
+5 225 M
+(+[    4.991868] loop7: detected capacity change from 0 to 21952) s
+5 214 M
+(+[    4.993871] loop8: detected capacity change from 0 to 22800) s
+5 203 M
+(+[    5.001256] loop9: detected capacity change from 0 to 1034424) s
+5 192 M
+(+[    5.002672] loop11: detected capacity change from 0 to 187776) s
+5 181 M
+(+[    5.006586] loop10: detected capacity change from 0 to 1056784) s
+5 170 M
+(+[    5.006867] loop12: detected capacity change from 0 to 183680) s
+5 159 M
+(+[    5.007900] loop13: detected capacity change from 0 to 28648) s
+5 148 M
+(+[    5.015461] loop14: detected capacity change from 0 to 21848) s
+5 137 M
+(+[    5.018353] loop15: detected capacity change from 0 to 29424) s
+5 126 M
+(+[    5.020618] loop16: detected capacity change from 0 to 22056) s
+5 115 M
+(+[    5.028837] loop17: detected capacity change from 0 to 79520) s
+5 104 M
+(+[    5.031285] loop19: detected capacity change from 0 to 1136) s
+5 93 M
+(+[    5.033490] loop18: detected capacity change from 0 to 1128) s
+5 82 M
+(+[    5.034742] loop20: detected capacity change from 0 to 91008) s
+5 71 M
+(+[    5.038100] loop21: detected capacity change from 0 to 430936) s
+5 60 M
+(+[    5.156138] audit: type=1400 audit\(1740338163.927:2\): apparmor="STATUS" operation="prof) s
+5 49 M
+(ile_load" profile="unconfined" name="buildah" pid=846 comm="apparmor_parser") s
+5 38 M
+(+[    5.156592] audit: type=1400 audit\(1740338163.927:3\): apparmor="STATUS" operation="prof) s
+5 27 M
+(ile_load" profile="unconfined" name="busybox" pid=847 comm="apparmor_parser") s
+5 16 M
+(+[    5.156597] audit: type=1400 audit\(1740338163.927:4\): apparmor="STATUS" operation="prof) s
+5 5 M
+(ile_load" profile="unconfined" name="cam" pid=848 comm="apparmor_parser") s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 11 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(+[    5.156947] audit: type=1400 audit\(1740338163.927:5\): apparmor="STATUS" operation="prof) s
+5 731 M
+(ile_load" profile="unconfined" name="1password" pid=839 comm="apparmor_parser") s
+5 720 M
+(+[    5.157772] audit: type=1400 audit\(1740338163.928:6\): apparmor="STATUS" operation="prof) s
+5 709 M
+(ile_load" profile="unconfined" name="Discord" pid=840 comm="apparmor_parser") s
+5 698 M
+(+[    5.157777] audit: type=1400 audit\(1740338163.928:7\): apparmor="STATUS" operation="prof) s
+5 687 M
+(ile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=841 comm="apparmor_p) s
+5 676 M
+(arser") s
+5 665 M
+(+[    5.157779] audit: type=1400 audit\(1740338163.928:8\): apparmor="STATUS" operation="prof) s
+5 654 M
+(ile_load" profile="unconfined" name="brave" pid=845 comm="apparmor_parser") s
+5 643 M
+(+[    5.157781] audit: type=1400 audit\(1740338163.928:9\): apparmor="STATUS" operation="prof) s
+5 632 M
+(ile_load" profile="unconfined" name="balena-etcher" pid=844 comm="apparmor_parser") s
+5 621 M
+(+[    5.157782] audit: type=1400 audit\(1740338163.928:10\): apparmor="STATUS" operation="pro) s
+5 610 M
+(file_load" profile="unconfined" name="QtWebEngineProcess" pid=842 comm="apparmor_parser") s
+5 599 M
+(+[    5.159822] audit: type=1400 audit\(1740338163.931:11\): apparmor="STATUS" operation="pro) s
+5 588 M
+(file_load" profile="unconfined" name="devhelp" pid=858 comm="apparmor_parser") s
+5 577 M
+(+[    5.265456] PEFILE: Unsigned PE binary) s
+5 566 M
+(+[    5.957782] NET: Registered PF_QIPCRTR protocol family) s
+5 555 M
+(+[    7.190670] loop22: detected capacity change from 0 to 8) s
+5 544 M
+(+[   17.428414] systemd-journald[372]: File /var/log/journal/91269f289b2c44db97f1de830c3ff9) s
+5 533 M
+(45/user-1000.journal corrupted or uncleanly shut down, renaming and replacing.) s
+5 522 M
+(+[   17.637469] kauditd_printk_skb: 162 callbacks suppressed) s
+5 511 M
+(+[   17.637474] audit: type=1400 audit\(1740338176.408:174\): apparmor="DENIED" operation="ca) s
+5 500 M
+(pable" class="cap" profile="/snap/snapd/23545/usr/lib/snapd/snap-confine" pid=1791 comm="sn) s
+5 489 M
+(ap-confine" capability=12  capname="net_admin") s
+5 478 M
+(+[   17.637480] audit: type=1400 audit\(1740338176.408:175\): apparmor="DENIED" operation="ca) s
+5 467 M
+(pable" class="cap" profile="/snap/snapd/23545/usr/lib/snapd/snap-confine" pid=1790 comm="sn) s
+5 456 M
+(ap-confine" capability=12  capname="net_admin") s
+5 445 M
+(+[   17.637483] audit: type=1400 audit\(1740338176.408:176\): apparmor="DENIED" operation="ca) s
+5 434 M
+(pable" class="cap" profile="/snap/snapd/23545/usr/lib/snapd/snap-confine" pid=1790 comm="sn) s
+5 423 M
+(ap-confine" capability=38  capname="perfmon") s
+5 412 M
+(+[   17.637485] audit: type=1400 audit\(1740338176.408:177\): apparmor="DENIED" operation="ca) s
+5 401 M
+(pable" class="cap" profile="/snap/snapd/23545/usr/lib/snapd/snap-confine" pid=1791 comm="sn) s
+5 390 M
+(ap-confine" capability=38  capname="perfmon") s
+5 379 M
+(+[   17.639118] audit: type=1400 audit\(1740338176.410:178\): apparmor="DENIED" operation="ca) s
+5 368 M
+(pable" class="cap" profile="/snap/snapd/23545/usr/lib/snapd/snap-confine" pid=1791 comm="sn) s
+5 357 M
+(ap-confine" capability=4  capname="fsetid") s
+5 346 M
+(+[   17.639416] audit: type=1400 audit\(1740338176.410:179\): apparmor="DENIED" operation="ca) s
+5 335 M
+(pable" class="cap" profile="/snap/snapd/23545/usr/lib/snapd/snap-confine" pid=1790 comm="sn) s
+5 324 M
+(ap-confine" capability=4  capname="fsetid") s
+5 313 M
+(+[   17.702655] I changed the sound driver in the Linux Kernel) s
+5 302 M
+(+[   18.791977] audit: type=1400 audit\(1740338177.563:180\): apparmor="ALLOWED" operation="c) s
+5 291 M
+(apable" class="cap" profile="Xorg" pid=2171 comm="Xorg" capability=12  capname="net_admin") s
+5 280 M
+(+[   18.865960] audit: type=1400 audit\(1740338177.637:181\): apparmor="ALLOWED" operation="o) s
+5 269 M
+(pen" class="file" profile="Xorg" name="/tmp/server-0.xkm" pid=2171 comm="Xorg" requested_ma) s
+5 258 M
+(sk="r" denied_mask="r" fsuid=0 ouid=1000) s
+5 247 M
+(+[   18.866383] audit: type=1400 audit\(1740338177.637:182\): apparmor="ALLOWED" operation="u) s
+5 236 M
+(nlink" class="file" profile="Xorg" name="/tmp/server-0.xkm" pid=2171 comm="Xorg" requested_) s
+5 225 M
+(mask="d" denied_mask="d" fsuid=0 ouid=1000) s
+5 214 M
+(+[   18.936153] audit: type=1400 audit\(1740338177.707:183\): apparmor="ALLOWED" operation="c) s
+5 203 M
+(apable" class="cap" profile="Xorg" pid=2171 comm="Xorg" capability=2  capname="dac_read_sea) s
+5 192 M
+(rch") s
+5 181 M
+(+[   20.549177] rfkill: input handler disabled) s
+5 170 M
+(+[   52.188579] hv_balloon: Max. dynamic memory size: 1048576 MB) s
+5 159 M
+(+[   75.544424] TCP: eth0: Driver has suspect GRO implementation, TCP performance may be co) s
+5 148 M
+(mpromised.) s
+5 137 M
+(+[   77.767596] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 126 M
+(e error status: 2) s
+5 115 M
+(+[   77.768586] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 104 M
+(e error status: 2) s
+5 93 M
+(+[   77.785418] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 82 M
+(e error status: 2) s
+5 71 M
+(+[   77.786022] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 60 M
+(e error status: 2) s
+5 49 M
+(+[   77.998840] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 38 M
+(e error status: 2) s
+5 27 M
+(+[   78.613717] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 16 M
+(e error status: 2) s
+5 5 M
+(+[   78.614931] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 12 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(e error status: 2) s
+5 731 M
+(+[   79.817197] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 720 M
+(e error status: 2) s
+5 709 M
+(+[   79.817796] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 698 M
+(e error status: 2) s
+5 687 M
+(+[   79.818155] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 676 M
+(e error status: 2) s
+5 665 M
+(+[   80.592688] kauditd_printk_skb: 22 callbacks suppressed) s
+5 654 M
+(+[   80.592692] audit: type=1400 audit\(1740338239.733:206\): apparmor="ALLOWED" operation="c) s
+5 643 M
+(apable" class="cap" profile="Xorg" pid=2171 comm="Xorg" capability=2  capname="dac_read_sea) s
+5 632 M
+(rch") s
+5 621 M
+(+[   80.601209] audit: type=1400 audit\(1740338239.742:207\): apparmor="ALLOWED" operation="c) s
+5 610 M
+(apable" class="cap" profile="Xorg" pid=2171 comm="Xorg" capability=2  capname="dac_read_sea) s
+5 599 M
+(rch") s
+5 588 M
+(+[   80.622247] audit: type=1400 audit\(1740338239.763:208\): apparmor="ALLOWED" operation="c) s
+5 577 M
+(apable" class="cap" profile="Xorg" pid=2171 comm="Xorg" capability=2  capname="dac_read_sea) s
+5 566 M
+(rch") s
+5 555 M
+(+[   80.750573] audit: type=1400 audit\(1740338239.891:209\): apparmor="ALLOWED" operation="c) s
+5 544 M
+(apable" class="cap" profile="Xorg" pid=2171 comm="Xorg" capability=2  capname="dac_read_sea) s
+5 533 M
+(rch") s
+5 522 M
+(+[   83.327657] net_ratelimit: 3 callbacks suppressed) s
+5 511 M
+(+[   83.327663] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 500 M
+(e error status: 2) s
+5 489 M
+(+[   83.349799] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 478 M
+(e error status: 2) s
+5 467 M
+(+[   83.356460] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 456 M
+(e error status: 2) s
+5 445 M
+(+[   83.356848] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 434 M
+(e error status: 2) s
+5 423 M
+(+[   83.574448] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 412 M
+(e error status: 2) s
+5 401 M
+(+[   83.575167] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 390 M
+(e error status: 2) s
+5 379 M
+(+[   83.577175] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 368 M
+(e error status: 2) s
+5 357 M
+(+[   83.577391] hv_netvsc bf426417-b435-4595-84c1-e5ae65924e04 eth0: nvsp_rndis_pkt_complet) s
+5 346 M
+(e error status: 2) s
+5 335 M
+(diff --git a/generate-panic/panic.c b/generate-panic/panic.c) s
+5 324 M
+(new file mode 100644) s
+5 313 M
+(index 0000000..1da8441) s
+5 302 M
+(--- /dev/null) s
+5 291 M
+(+++ b/generate-panic/panic.c) s
+5 280 M
+(@@ -0,0 +1,24 @@) s
+5 269 M
+(+// SPDX-License-Identifier: GPL-2.0) s
+5 258 M
+(+#include <linux/module.h>) s
+5 247 M
+(+#include <linux/kernel.h>) s
+5 236 M
+(+#include <linux/init.h>) s
+5 225 M
+(+#include <linux/moduleparam.h>) s
+5 214 M
+(+) s
+5 203 M
+(+MODULE_LICENSE\("GPL"\);) s
+5 192 M
+(+MODULE_AUTHOR\("Gabriel Shahrouzi"\);) s
+5 181 M
+(+MODULE_DESCRIPTION\("Generate panic"\);) s
+5 170 M
+(+) s
+5 159 M
+(+static int __init init_panic\(void\)) s
+5 148 M
+(+{) s
+5 137 M
+(+       pr_info\("Invoking panic"\);) s
+5 126 M
+(+       panic\("Panic called\\n"\);) s
+5 115 M
+(+       return 0;) s
+5 104 M
+(+}) s
+5 93 M
+(+) s
+5 82 M
+(+static void __exit exit_panic\(void\)) s
+5 71 M
+(+{) s
+5 60 M
+(+       pr_info\("Bye\\n"\);) s
+5 49 M
+(+}) s
+5 38 M
+(+) s
+5 27 M
+(+module_init\(init_panic\);) s
+5 16 M
+(+module_exit\(exit_panic\);) s
+5 5 M
+(-- ) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 13 def
+/fname (0001-Generate-panic-module-and-log-output.patch) def
+/fdir (.) def
+/ftail (0001-Generate-panic-module-and-log-output.patch) def
+% User defined strings:
+/fmodstr (Sun Feb 23 14:49:02 2025) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 742 M
+(2.45.2) s
+_R
+S
+%%Trailer
+%%Pages: 13
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

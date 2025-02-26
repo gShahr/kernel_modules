@@ -1,0 +1,25 @@
+From daf5282dfc3b71d7c50a347340897af3dab6a6ae Mon Sep 17 00:00:00 2001
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Sun, 23 Feb 2025 19:39:20 -0500
+Subject: [PATCH] Proof of using latest kernel
+
+Complete task for building and booting the latest tree.\n
+
+Signed-off-by: Gabriel <gshahrouzi@gmail.com>
+---
+ boot-latest-kernel/kernel_version_proof.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 boot-latest-kernel/kernel_version_proof.txt
+
+diff --git a/boot-latest-kernel/kernel_version_proof.txt b/boot-latest-kernel/kernel_version_proof.txt
+new file mode 100644
+index 0000000..70fbb47
+--- /dev/null
++++ b/boot-latest-kernel/kernel_version_proof.txt
+@@ -0,0 +1,3 @@
++Linux gabriel-shahrouzi-Virtual-Machine 6.14.0-rc3+ #1 SMP PREEMPT_DYNAMIC Wed Feb 19 23:34:15 EST 2025 x86_64 x86_64 x86_64 GNU/Linux
++Linux version 6.14.0-rc3+ (gabriel-shahrouzi@gabriel-shahrouzi-Virtual-Machine) (gcc (Ubuntu 14.2.0-4ubuntu2) 14.2.0, GNU ld (GNU Binutils for Ubuntu) 2.43.1) #1 SMP PREEMPT_DYNAMIC Wed Feb 19 23:34:15 EST 2025
++aa35fe6 Modify extra version in makefile
+-- 
+2.45.2
+
